@@ -1,11 +1,118 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="/src/main/resources/static/css/index.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cayo Cartagena</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Momo+Trust+Display&family=Varela+Round&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    <link rel="stylesheet" href="/css/inicio.css">
+    <link rel="icon" type="image/png" href="/img/logo.png">
 </head>
+
 <body>
-    <h1>Este es mi index</h1>
+    <header>
+        <div class="container py-3">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                <h2 class="h1 mb-0"> <img src="/img/logo.png" alt="puerto" class="puerto">Cayo Cartagena</h2>
+                <nav class="d-flex flex-wrap gap-2">
+                    <a href="/login" class="btn btn-isla-claro">Iniciar sesión</a>
+                    <a href="#como-usar" class="btn btn-isla">Crear cuenta</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="hero">
+            <div class="container">
+                <h1 class="display-4 fw-bold">Planea tu día en las islas <br> sin ir al muelle</h1>
+                <p class="lead">
+                    Transporte, comida, hospedaje y actividades en un solo lugar. <br>
+                    Compara precios, arma tu itinerario y paga en línea.
+                </p>
+                <a href="/login" class="btn btn-lg btn-isla-claro">Iniciar sesión</a>
+            </div>
+        </section>
+        <div class="row">
+            <div class="col-12">
+                <h3 class="h3" id="como-usar">¿Cómo quieres usar la plataforma?</h3>
+                <p>Elige tu perfil para registrarte.</p>
+                <div class="row g-4">
+                    <div class="col-12 col-md-4">
+                        <div class="card h-100">
+                            <img class="card-img-top" src="/img/soy-turista.webp" alt="Turistas en la playa" />
+                            <div class="card-body">
+                                <h5>Soy turista</h5>
+                                <p class="card-text">Consulta precios y reserva en línea.</p>
+                                <a class="btn btn-isla" href="/registro-turista" role="button">Registrarme</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="card h-100">
+                            <img class="card-img-top" src="/img/soy-proveedor.webp"
+                                alt="Servicios de proveedores locales" />
+                            <div class="card-body">
+                                <h5>Soy proveedor local</h5>
+                                <p class="card-text">Publica tus servicios: almuerzos, carpas, jet ski.</p>
+                                <a class="btn btn-isla" href="/registro?tipo=proveedor" role="button">Registrarme</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="card h-100">
+                            <img class="card-img-top" src="/img/registro-3.webp" alt="Agencias de turismo" />
+                            <div class="card-body">
+                                <h5>Soy agencia turística</h5>
+                                <p class="card-text">Ofrece tus pasadías y paquetes.</p>
+                                <a class="btn btn-isla" href="/registro?tipo=agencia" role="button">Registrarme</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="footer-contenido">
+
+            <div>
+                <h3>Cayo Cartagena</h3>
+                <p>Transporte, comida, hospedaje y actividades hacia las islas en un solo lugar.</p>
+            </div>
+
+            <div>
+                <h3>Explora</h3>
+                <a href="html/catalogo.html">Catálogo</a>
+                <a href="html/itinerario.html">Mis itinerarios</a>
+                <a href="html/reservas.html">Mis reservas</a>
+            </div>
+
+            <div>
+                <h3>Únete</h3>
+                <a href="html/registro-turista.html">Registrarme como cliente</a>
+                <a href="/registro?tipo=proveedor">Soy proveedor local</a>
+                <a href="/registro?tipo=agencia">Soy agencia de turismo</a>
+            </div>
+
+            <div>
+                <h3>Contacto</h3>
+                <p>Cartagena de Indias, Colombia</p>
+                <p>contacto@cayocartagena.test</p>
+                <a href="/terminos">Términos de uso</a>
+                <a href="/privacidad">Tratamiento de datos personales</a>
+            </div>
+        </div>
+        <div class="footer-inferior">
+            © 2026 Cayo Cartagena · Prototipo académico
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+</html>

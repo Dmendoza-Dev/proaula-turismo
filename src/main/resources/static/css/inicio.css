@@ -1,0 +1,13 @@
+
+.hero {
+    padding: 15% 10% 10% 5%;
+    margin: 4% 0% 5% 0%;
+    background-image:
+        linear-gradient(rgba(11, 79, 108, 0.55), rgba(11, 79, 108, 0.55)),
+        url("../img/fondo-principal.webp");
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    border-radius: 24px;
+    overflow: hidden;
+}
