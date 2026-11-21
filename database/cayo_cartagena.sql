@@ -16,6 +16,47 @@ create table Usuario (
 );
 
 -- ------------------------------------------------------------
+-- Datos del negocio del proveedor
+-- ------------------------------------------------------------
+create table Proveedor (
+    Id_proveedor    int auto_increment primary key,
+    Nombre_negocio  varchar(100) not null,
+    Tipo_servicio   varchar(50) not null,
+    Isla            varchar(100) not null,
+    Descripcion     varchar(300),
+    Id_usuario      int not null unique,
+
+    foreign key (Id_usuario) references Usuario(Id_usuario)
+);
+
+-- ------------------------------------------------------------
+-- Datos del perfil del turista (cliente)
+-- ------------------------------------------------------------
+create table Turista (
+    Id_turista      int auto_increment primary key,
+    Tipo_turista    enum('Turista', 'Residente') not null default 'Turista',
+    Nacionalidad    varchar(60) not null,
+    Id_usuario      int not null unique,
+
+    foreign key (Id_usuario) references Usuario(Id_usuario)
+);
+
+-- ------------------------------------------------------------
+-- Datos de la agencia de turismo
+-- ------------------------------------------------------------
+create table Agencia (
+    Id_agencia          int auto_increment primary key,
+    Razon_social        varchar(100) not null,
+    Nit                 varchar(20) not null unique,
+    Representante       varchar(100) not null,
+    Cedula_representante varchar(20) not null,
+    Rnt                 varchar(255) not null,
+    Id_usuario          int not null unique,
+
+    foreign key (Id_usuario) references Usuario(Id_usuario)
+);
+
+-- ------------------------------------------------------------
 -- Ofertas publicadas por proveedores o agencias
 -- ------------------------------------------------------------
 create table Oferta (

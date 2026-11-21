@@ -1,3 +1,8 @@
+.destacado {
+    color: var(--naranja-claro, #FFB06A);
+    text-shadow: 0 2px 10px rgba(8, 58, 82, 0.35);
+}
+
 .login-marca span {
     font-family: "Momo Trust Display", sans-serif;
     font-weight: 400;
@@ -51,6 +56,7 @@
     font-weight: 700;
     font-size: 1.25rem;
     margin-bottom: 24px;
+    transition: transform 0.25s ease;
 }
 
 .login-marca .puerto {
@@ -58,6 +64,17 @@
     height: 36px;
     flex-shrink: 0;
     object-fit: contain;
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.login-marca:hover,
+.login-marca:focus-visible {
+    transform: translateY(-2px);
+}
+
+.login-marca:hover .puerto,
+.login-marca:focus-visible .puerto {
+    transform: scale(1.15) rotate(-8deg);
 }
 
 .login-titulo {
@@ -263,9 +280,162 @@
     font-size: inherit;
 }
 
+/* ===== Registro de proveedor ===== */
+.login-titulo .destacado {
+    color: var(--naranja-claro, #FFB06A);
+}
+
+.registro-seccion {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #F7F1E5;
+    opacity: 0.85;
+}
+
+.login-card .form-select.login-input {
+    padding: 0 40px 0 14px;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23F7F1E5' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 16px 12px;
+    cursor: pointer;
+}
+
+.login-card .form-select.login-input option {
+    color: #083A52;
+    background: #fff;
+}
+
+.login-card .form-select.login-input:invalid {
+    color: #B8CFDA;
+}
+
+.login-card .login-textarea {
+    min-height: 108px;
+    padding: 12px 14px;
+    line-height: 1.5;
+    resize: vertical;
+}
+
 @media (max-width: 991.98px) {
     .registro-page .login-form-panel {
         align-items: flex-start;
         min-height: 100vh;
     }
+}
+
+/* ===== Registro de agencia ===== */
+.ayuda-campo {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    margin-left: 6px;
+    border: 1px solid rgba(247, 241, 229, 0.55);
+    border-radius: 50%;
+    color: #F7F1E5;
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1;
+    vertical-align: middle;
+    cursor: help;
+    user-select: none;
+}
+
+.ayuda-campo:hover,
+.ayuda-campo:focus-visible {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: #F7F1E5;
+}
+
+.ayuda-campo:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 176, 106, 0.35);
+}
+
+.ayuda-campo::after {
+    content: attr(data-tip);
+    position: absolute;
+    left: -8px;
+    bottom: calc(100% + 10px);
+    width: 250px;
+    max-width: calc(100vw - 90px);
+    padding: 9px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 10px;
+    background: #062B3C;
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.38);
+    color: #EAF4F8;
+    font-size: 0.78rem;
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: 0;
+    text-align: left;
+    white-space: normal;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(4px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    pointer-events: none;
+    z-index: 30;
+}
+
+.ayuda-campo::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: calc(100% + 4px);
+    width: 10px;
+    height: 10px;
+    background: #062B3C;
+    border-top: 1px solid rgba(255, 255, 255, 0.22);
+    border-left: 1px solid rgba(255, 255, 255, 0.22);
+    transform: rotate(45deg);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s ease;
+    pointer-events: none;
+    z-index: 31;
+}
+
+.ayuda-campo:hover::after,
+.ayuda-campo:focus-visible::after,
+.ayuda-campo:hover::before,
+.ayuda-campo:focus-visible::before {
+    opacity: 1;
+    visibility: visible;
+}
+
+.ayuda-campo:hover::after,
+.ayuda-campo:focus-visible::after {
+    transform: translateY(0);
+}
+
+.login-card .login-archivo {
+    padding: 9px 12px;
+    font-size: 0.85rem;
+    color: #D6E7EE;
+    cursor: pointer;
+}
+
+.login-card .login-archivo::file-selector-button {
+    margin-right: 12px;
+    padding: 7px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.14);
+    color: #F7F1E5;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.login-card .login-archivo::file-selector-button:hover {
+    background: rgba(255, 255, 255, 0.24);
 }

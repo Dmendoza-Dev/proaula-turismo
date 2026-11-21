@@ -11,3 +11,8 @@
     border-radius: 24px;
     overflow: hidden;
 }
+
+.hero h1 .destacado {
+    color: var(--naranja-claro);
+    text-shadow: 0 2px 10px rgba(8, 58, 82, 0.35);
+}

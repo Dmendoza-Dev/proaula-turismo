@@ -23,14 +23,14 @@
                     <img src="/img/logo.png" alt="Logo Cayo Cartagena" class="puerto">
                     <span>Cayo Cartagena</span>
                 </a>
-                <h1 class="login-titulo">Crea tu cuenta de turista</h1>
+                <h1 class="login-titulo">Crea tu cuenta de <span class="destacado">turista</span></h1>
                 <p class="login-sub">
                     ¿Ya tienes cuenta?
                     <a href="/login">Iniciar sesión</a>
                 </p>
 
                 <form action="/registro" method="POST" novalidate>
-                    <input type="hidden" name="tipoUsuario" value="CLIENTE">
+                    <input type="hidden" name="tipoUsuario" value="Cliente">
 
                     <div class="row g-3">
                         <div class="col-12">
@@ -83,11 +83,30 @@
                         </div>
 
                         <div class="col-12">
+                            <hr class="border-light opacity-25 my-1">
+                            <p class="registro-seccion">Sobre tu viaje</p>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="tipoTurista">¿Cómo nos visitas?</label>
+                            <select class="form-select login-input" id="tipoTurista" name="tipoTurista" required>
+                                <option value="" selected disabled>Elige una opción</option>
+                                <option value="Turista">Turista (vienes de otra ciudad o país)</option>
+                                <option value="Residente">Residente (vives en la zona)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label" for="nacionalidad">Nacionalidad</label>
+                            <input class="form-control login-input" type="text" id="nacionalidad" name="nacionalidad"
+                                placeholder="Ej. Colombiana" maxlength="60" required />
+                        </div>
+
+                        <div class="col-12">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="terminos" required>
                                 <label class="form-check-label" for="terminos">
-                                    Acepto los <a href="/terminos" class="login-enlace">términos de uso</a> y el
-                                    <a href="/privacidad" class="login-enlace">tratamiento de datos personales</a>.
+                                    Acepto los términos de uso y el tratamiento de datos personales.
                                 </label>
                             </div>
                         </div>
@@ -97,10 +116,6 @@
                         </div>
                     </div>
                 </form>
-
-                <p class="login-nota">
-                    Te enviaremos un correo para verificar tu cuenta antes de que puedas iniciar sesión.
-                </p>
             </div>
         </section>
 
