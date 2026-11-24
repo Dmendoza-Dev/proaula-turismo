@@ -125,12 +125,63 @@
                                             th:data-categoria="${oferta.categoria}"
                                             th:data-isla="${oferta.isla}"
                                             th:data-precio="${oferta.precio}">Agregar al itinerario</button>
-                                    <a class="catalogo-servicio-detalle" href="#" role="button">Ver detalle</a>
+                                    <a class="catalogo-servicio-detalle" data-bs-toggle="modal"
+                                       th:href="'#detalle-' + ${oferta.idOferta}" role="button">Ver detalle</a>
                                 </div>
                             </div>
                         </article>
                     </div>
                 </div>
+                <!-- Detalle de cada oferta -->
+                <div class="modal fade" th:each="oferta : ${ofertas}"
+                     th:id="'detalle-' + ${oferta.idOferta}" tabindex="-1"
+                     th:attr="aria-labelledby='titulo-detalle-' + ${oferta.idOferta}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" th:id="'titulo-detalle-' + ${oferta.idOferta}"
+                                    th:text="${oferta.nombreOferta}">Detalle de la oferta</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row g-3">
+                                    <div class="col-md-5" th:if="${imagenesPorOferta[oferta.idOferta] != null}">
+                                        <img class="img-fluid rounded" th:src="${imagenesPorOferta[oferta.idOferta]}"
+                                             th:alt="${oferta.nombreOferta}">
+                                    </div>
+                                    <div th:class="${imagenesPorOferta[oferta.idOferta] != null} ? 'col-md-7' : 'col-12'">
+                                        <p class="text-muted mb-1" th:text="${oferta.categoria}">Categoría</p>
+                                        <p th:text="${oferta.descripcion}">Descripción de la oferta.</p>
+                                        <dl class="row mb-0">
+                                            <dt class="col-5">Destino</dt>
+                                            <dd class="col-7" th:text="${oferta.isla}">Isla</dd>
+                                            <dt class="col-5">Precio por persona</dt>
+                                            <dd class="col-7" th:text="|$ ${#numbers.formatDecimal(oferta.precio, 1, 'POINT', 0, 'COMMA')}|">$ 0</dd>
+                                            <dt class="col-5">Cupos disponibles</dt>
+                                            <dd class="col-7" th:text="${oferta.cuposMaximos}">0</dd>
+                                            <dt class="col-5" th:if="${oferta.diasDisponibles != null}">Días disponibles</dt>
+                                            <dd class="col-7" th:if="${oferta.diasDisponibles != null}"
+                                                th:text="${oferta.diasDisponibles}">Lunes</dd>
+                                            <dt class="col-5" th:if="${oferta.horarioInicio != null and oferta.horarioFin != null}">Horario</dt>
+                                            <dd class="col-7" th:if="${oferta.horarioInicio != null and oferta.horarioFin != null}"
+                                                th:text="|${oferta.horarioInicio} - ${oferta.horarioFin}|">08:00 - 17:00</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                <button type="button" class="btn btn-success agregar-carrito"
+                                        th:data-id="${oferta.idOferta}"
+                                        th:data-nombre="${oferta.nombreOferta}"
+                                        th:data-categoria="${oferta.categoria}"
+                                        th:data-isla="${oferta.isla}"
+                                        th:data-precio="${oferta.precio}">Agregar al itinerario</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <p class="catalogo-servicios-vacio" th:if="${#lists.isEmpty(ofertas)}">
                     Todavía no hay servicios disponibles. Vuelve pronto para descubrir nuevas experiencias.
                 </p>
