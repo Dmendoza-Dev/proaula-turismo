@@ -1,8 +1,10 @@
 package co.edu.unicolombo.proaula_turismo.controller;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.text.Normalizer;
+import java.util.List;
+import java.util.Locale;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,12 +13,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import co.edu.unicolombo.proaula_turismo.model.Oferta;
 import co.edu.unicolombo.proaula_turismo.model.Usuario;
 import co.edu.unicolombo.proaula_turismo.service.ArchivoService;
 import co.edu.unicolombo.proaula_turismo.service.OfertaService;
 import co.edu.unicolombo.proaula_turismo.service.SesionService;
 import co.edu.unicolombo.proaula_turismo.service.UsuarioService;
 import co.edu.unicolombo.proaula_turismo.service.dto.RegistroUsuario;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -47,8 +51,12 @@ public class InicioController {
 
     @PostMapping("/login")
     public String procesarLogin(@RequestParam String correo, @RequestParam String contrasena,
-            HttpSession sesionHttp, RedirectAttributes mensajes) {
+            HttpServletRequest peticion, HttpSession sesionHttp, RedirectAttributes mensajes) {
         return usuarios.autenticar(correo, contrasena).map(usuario -> {
+            // Evita fijacion de sesion: el id cambia justo antes de autenticar.
+            peticion.changeSessionId();
+            sesionHttp.removeAttribute(SesionService.ITINERARIO);
+            sesionHttp.removeAttribute(SesionService.RESERVA);
             sesion.iniciar(sesionHttp, usuario);
             return "redirect:" + paginaInicial(usuario);
         }).orElseGet(() -> {
@@ -64,17 +72,17 @@ public class InicioController {
     }
 
     @GetMapping("/catalogo")
-    public String catalogo(Model modelo) {
-        var publicadas = ofertas.publicadas();
-        Map<Integer, String> imagenes = new LinkedHashMap<>();
-        for (var oferta : publicadas) {
-            var lista = ofertas.imagenes(oferta.getIdOferta());
-            if (!lista.isEmpty()) {
-                imagenes.put(oferta.getIdOferta(), lista.get(0).getRuta());
-            }
+    public String catalogo(@RequestParam(name = "q", required = false) String busqueda, Model modelo) {
+        List<Oferta> publicadas = ofertas.publicadas();
+        String filtro = normalizar(busqueda);
+        if (!filtro.isEmpty()) {
+            publicadas = publicadas.stream()
+                    .filter(oferta -> coincide(oferta, filtro))
+                    .toList();
         }
         modelo.addAttribute("ofertas", publicadas);
-        modelo.addAttribute("imagenesPorOferta", imagenes);
+        modelo.addAttribute("imagenesPorOferta", ofertas.imagenesPrincipales(publicadas));
+        modelo.addAttribute("q", busqueda == null ? "" : busqueda.trim());
         return "turista/catalogo";
     }
 
@@ -115,20 +123,53 @@ public class InicioController {
             @RequestParam(name = "nit", required = false) String nit,
             @RequestParam(name = "representante", required = false) String representante,
             @RequestParam(name = "cedulaRepresentante", required = false) String cedulaRepresentante,
+            @RequestParam(name = "tipoTurista", required = false) String tipoTurista,
+            @RequestParam(name = "nacionalidad", required = false) String nacionalidad,
             @RequestParam(name = "rnt", required = false) MultipartFile rnt,
             RedirectAttributes mensajes) {
 
+        String rutaRnt = null;
         try {
-            String rutaRnt = archivos.guardar(rnt, "rnt");
+            rutaRnt = archivos.guardar(rnt, "rnt");
             usuarios.registrar(new RegistroUsuario(nombres, documento, telefono, correo, contrasena,
                     tipoUsuario, nombreNegocio, tipoServicio, isla, descripcion,
-                    razonSocial, nit, representante, cedulaRepresentante, rutaRnt));
+                    razonSocial, nit, representante, cedulaRepresentante, rutaRnt,
+                    tipoTurista, nacionalidad));
             mensajes.addFlashAttribute("registroExitoso", "Cuenta creada. Inicia sesion para continuar.");
             return "redirect:/login";
         } catch (IllegalArgumentException e) {
+            archivos.borrar(rutaRnt);
             mensajes.addFlashAttribute("error", e.getMessage());
-            return "redirect:" + destinoRegistro(tipoUsuario);
+        } catch (DataIntegrityViolationException e) {
+            // Respaldo por si otra peticion registro el mismo correo, documento o NIT
+            // entre la validacion y el INSERT.
+            archivos.borrar(rutaRnt);
+            mensajes.addFlashAttribute("error", "Ya existe una cuenta o agencia con esos datos.");
+        } catch (IllegalStateException e) {
+            archivos.borrar(rutaRnt);
+            mensajes.addFlashAttribute("error", "No se pudo guardar el certificado RNT. Intenta de nuevo.");
         }
+        return "redirect:" + destinoRegistro(tipoUsuario);
+    }
+
+    private boolean coincide(Oferta oferta, String filtro) {
+        return contiene(oferta.getNombreOferta(), filtro)
+                || contiene(oferta.getCategoria(), filtro)
+                || contiene(oferta.getIsla(), filtro)
+                || contiene(oferta.getDescripcion(), filtro);
+    }
+
+    private boolean contiene(String valor, String filtro) {
+        return valor != null && normalizar(valor).contains(filtro);
+    }
+
+    private String normalizar(String valor) {
+        if (valor == null) {
+            return "";
+        }
+        return Normalizer.normalize(valor.trim(), Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "")
+                .toLowerCase(Locale.ROOT);
     }
 
     private String destinoRegistro(String tipo) {

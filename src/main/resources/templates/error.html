@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Error | Cayo Cartagena</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Momo+Trust+Display&family=Varela+Round&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    <link rel="icon" type="image/png" href="/img/logo.png">
+</head>
+
+<body class="login-body">
+    <main class="login-page">
+        <section class="login-panel login-form-panel">
+            <div class="login-card text-center">
+                <a href="/" class="login-marca">
+                    <img src="/img/logo.png" alt="Logo Cayo Cartagena" class="puerto">
+                    <span>Cayo Cartagena</span>
+                </a>
+
+                <p class="display-4 fw-bold mb-1" th:text="${status != null ? status : 'Error'}">Error</p>
+                <h1 class="login-titulo h4">No pudimos completar la solicitud</h1>
+
+                <p class="text-muted" th:if="${status == 404}">
+                    La pagina que buscas no existe o fue movida. Revisa la direccion e intentalo de nuevo.
+                </p>
+                <p class="text-muted" th:if="${status == 403}">
+                    No tienes permiso para entrar en esa seccion.
+                </p>
+                <p class="text-muted" th:if="${status != null and status >= 500}">
+                    Ocurrio un error inesperado. Vuelve a intentarlo en unos segundos.
+                </p>
+                <p class="text-muted"
+                   th:if="${status == null or (status < 500 and status != 403 and status != 404)}">
+                    La solicitud no se pudo procesar. Vuelve al inicio para continuar.
+                </p>
+
+                <div class="d-grid gap-2 mt-4">
+                    <a href="/" class="btn btn-isla">Volver al inicio</a>
+                    <a href="/login" class="btn btn-secondary">Iniciar sesion</a>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+
+</html>
