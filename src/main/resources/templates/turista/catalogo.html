@@ -19,7 +19,7 @@
     <header class="catalogo-cabecera">
         <div class="container py-3">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-                <h2 class="h1 mb-0"><img src="/img/logo.png" alt="" class="puerto">Cayo Cartagena</h2>
+                <h2 class="h1 mb-0"><img src="/img/logo.png" alt="Logo Cayo Cartagena" class="puerto">Cayo Cartagena</h2>
                 <nav class="d-flex flex-wrap gap-2 align-items-center">
                     <a href="#servicios" class="btn btn-isla-claro">Servicios</a>
                     <a href="#experiencias" class="btn btn-isla-claro">Experiencias</a>
@@ -79,9 +79,9 @@
         <div class="row">
             <div class="col-12">
                 <div class="catalogo-busqueda">
-                    <form class="catalogo-busqueda-formulario" role="search">
-                        <input class="catalogo-busqueda-campo" type="search"
-                            placeholder="Buscar servicios, islas y experiencias" aria-label="Buscar" />
+                    <form class="catalogo-busqueda-formulario" role="search" action="/catalogo#servicios" method="get">
+                        <input class="catalogo-busqueda-campo" type="search" name="q" th:value="${q}"
+                            placeholder="Buscar servicios, islas y experiencias" aria-label="Buscar servicios" />
                         <button class="catalogo-busqueda-boton" type="submit">Buscar</button>
                     </form>
                 </div>
@@ -100,7 +100,7 @@
                         <article class="card h-100 catalogo-servicio">
                             <div class="catalogo-servicio-portada">
                                 <img class="catalogo-servicio-foto" th:if="${imagenesPorOferta[oferta.idOferta] != null}"
-                                     th:src="${imagenesPorOferta[oferta.idOferta]}" alt="">
+                                     th:src="${imagenesPorOferta[oferta.idOferta]}" th:alt="${oferta.nombreOferta}">
                                 <span class="catalogo-servicio-categoria" th:text="${oferta.categoria}">Categoría</span>
                                 <span class="catalogo-servicio-isla" th:text="${oferta.isla}">Isla</span>
                             </div>
@@ -182,28 +182,12 @@
                     </div>
                 </div>
 
-                <p class="catalogo-servicios-vacio" th:if="${#lists.isEmpty(ofertas)}">
+                <p class="catalogo-servicios-vacio" th:if="${#lists.isEmpty(ofertas)}"
+                   th:text="${!#strings.isEmpty(q)}
+                            ? 'No encontramos servicios para tu busqueda. Prueba con otra palabra.'
+                            : 'Todavia no hay servicios disponibles. Vuelve pronto para descubrir nuevas experiencias.'">
                     Todavía no hay servicios disponibles. Vuelve pronto para descubrir nuevas experiencias.
                 </p>
-                <nav aria-label="Pagination">
-                    <ul class="pagination">
-                        <li class="page-item">
-                            <a class="page-link" href="#">Previous</a>
-                        </li>
-                        <li class="page-item active" aria-current="page">
-                            <span class="page-link">1</span>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">2</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">3</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Next</a>
-                        </li>
-                    </ul>
-                </nav>
             </div>
         </div>
         </section>
