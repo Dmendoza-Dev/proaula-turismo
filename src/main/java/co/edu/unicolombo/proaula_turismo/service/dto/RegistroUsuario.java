@@ -18,5 +18,7 @@ public record RegistroUsuario(
         String nit,
         String representante,
         String cedulaRepresentante,
-        String rutaRnt) {
+        String rutaRnt,
+        String tipoTurista,
+        String nacionalidad) {
 }

@@ -23,55 +23,65 @@ public class UsuarioService {
     private final TuristaRepository turistas;
     private final ProveedorRepository proveedores;
     private final AgenciaRepository agencias;
-    private final PasswordHasher hasher;
 
     public UsuarioService(UsuarioRepository usuarios, TuristaRepository turistas,
-            ProveedorRepository proveedores, AgenciaRepository agencias, PasswordHasher hasher) {
+            ProveedorRepository proveedores, AgenciaRepository agencias) {
         this.usuarios = usuarios;
         this.turistas = turistas;
         this.proveedores = proveedores;
         this.agencias = agencias;
-        this.hasher = hasher;
     }
 
     @Transactional
     public void registrar(RegistroUsuario datos) {
-        String tipo = normalizarTipo(datos.tipoUsuario());
-        validar(datos, tipo);
+        String tipo = ReglasRegistro.normalizarTipo(datos.tipoUsuario());
+        RegistroUsuario limpio = ReglasRegistro.normalizar(datos, tipo);
+        ReglasRegistro.validar(limpio, tipo);
+
+        if (usuarios.existsByCorreo(limpio.correo())) {
+            throw new IllegalArgumentException("Ya existe una cuenta con ese correo.");
+        }
+        if (usuarios.existsByDocumento(limpio.documento())) {
+            throw new IllegalArgumentException("Ya existe una cuenta con ese documento.");
+        }
+        if ("Agencia".equals(tipo) && agencias.existsByNit(limpio.nit())) {
+            throw new IllegalArgumentException("Ya existe una agencia con ese NIT.");
+        }
 
         Usuario usuario = new Usuario();
-        usuario.setNombres(datos.nombres().trim());
-        usuario.setDocumento(datos.documento().trim());
-        usuario.setCorreo(datos.correo().trim().toLowerCase(Locale.ROOT));
-        usuario.setTelefono(datos.telefono());
-        usuario.setContrasena(hasher.generar(datos.contrasena()));
+        usuario.setNombres(limpio.nombres());
+        usuario.setDocumento(limpio.documento());
+        usuario.setCorreo(limpio.correo());
+        usuario.setTelefono(limpio.telefono());
+        // Prototipo academico: se guarda tal cual para poder leerla en la BD.
+        usuario.setContrasena(limpio.contrasena());
         usuario.setTipoUsuario(tipo);
-        usuarios.save(usuario);
+        usuarios.saveAndFlush(usuario);
 
         switch (tipo) {
             case "Cliente" -> {
                 Turista turista = new Turista();
-                turista.setTipoTurista("Turista");
-                turista.setNacionalidad("Colombiana");
+                turista.setTipoTurista(limpio.tipoTurista());
+                turista.setNacionalidad(limpio.nacionalidad());
                 turista.setIdUsuario(usuario.getIdUsuario());
                 turistas.save(turista);
             }
             case "Proveedor" -> {
                 Proveedor proveedor = new Proveedor();
-                proveedor.setNombreNegocio(datos.nombreNegocio());
-                proveedor.setTipoServicio(datos.tipoServicio());
-                proveedor.setIsla(datos.isla());
-                proveedor.setDescripcion(datos.descripcion());
+                proveedor.setNombreNegocio(limpio.nombreNegocio());
+                proveedor.setTipoServicio(limpio.tipoServicio());
+                proveedor.setIsla(limpio.isla());
+                proveedor.setDescripcion(limpio.descripcion());
                 proveedor.setIdUsuario(usuario.getIdUsuario());
                 proveedores.save(proveedor);
             }
             case "Agencia" -> {
                 Agencia agencia = new Agencia();
-                agencia.setRazonSocial(datos.razonSocial());
-                agencia.setNit(datos.nit());
-                agencia.setRepresentante(datos.representante());
-                agencia.setCedulaRepresentante(datos.cedulaRepresentante());
-                agencia.setRnt(datos.rutaRnt());
+                agencia.setRazonSocial(limpio.razonSocial());
+                agencia.setNit(limpio.nit());
+                agencia.setRepresentante(limpio.representante());
+                agencia.setCedulaRepresentante(limpio.cedulaRepresentante());
+                agencia.setRnt(limpio.rutaRnt());
                 agencia.setIdUsuario(usuario.getIdUsuario());
                 agencias.save(agencia);
             }
@@ -84,45 +94,9 @@ public class UsuarioService {
             return Optional.empty();
         }
         Optional<Usuario> encontrado = usuarios.findByCorreo(correo.trim().toLowerCase(Locale.ROOT));
-        if (encontrado.isEmpty() || !hasher.verificar(contrasena, encontrado.get().getContrasena())) {
+        if (encontrado.isEmpty() || !encontrado.get().getContrasena().equals(contrasena)) {
             return Optional.empty();
         }
         return encontrado;
-    }
-
-    private void validar(RegistroUsuario datos, String tipo) {
-        if (datos.nombres() == null || datos.nombres().isBlank()
-                || datos.documento() == null || datos.documento().isBlank()
-                || datos.correo() == null || datos.correo().isBlank()
-                || datos.contrasena() == null || datos.contrasena().length() < 8) {
-            throw new IllegalArgumentException("Revisa los datos personales y la contrasena (minimo 8 caracteres).");
-        }
-        if (usuarios.existsByCorreo(datos.correo().trim().toLowerCase(Locale.ROOT))) {
-            throw new IllegalArgumentException("Ya existe una cuenta con ese correo.");
-        }
-        if (usuarios.existsByDocumento(datos.documento().trim())) {
-            throw new IllegalArgumentException("Ya existe una cuenta con ese documento.");
-        }
-        if (tipo.equals("Proveedor") && (datos.nombreNegocio() == null || datos.tipoServicio() == null
-                || datos.isla() == null)) {
-            throw new IllegalArgumentException("Faltan datos del negocio.");
-        }
-        if (tipo.equals("Agencia") && (datos.razonSocial() == null || datos.nit() == null
-                || datos.representante() == null || datos.cedulaRepresentante() == null
-                || datos.rutaRnt() == null)) {
-            throw new IllegalArgumentException("Faltan datos de la agencia o del certificado RNT.");
-        }
-    }
-
-    private String normalizarTipo(String tipo) {
-        if (tipo == null) {
-            return "Cliente";
-        }
-        String valor = tipo.trim().toLowerCase(Locale.ROOT);
-        return switch (valor) {
-            case "proveedor" -> "Proveedor";
-            case "agencia" -> "Agencia";
-            default -> "Cliente";
-        };
     }
 }
