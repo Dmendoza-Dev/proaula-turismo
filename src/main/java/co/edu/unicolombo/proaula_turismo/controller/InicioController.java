@@ -1,11 +1,16 @@
 package co.edu.unicolombo.proaula_turismo.controller;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import co.edu.unicolombo.proaula_turismo.model.Oferta;
 import co.edu.unicolombo.proaula_turismo.model.Turista;
 import co.edu.unicolombo.proaula_turismo.model.Usuario;
 
@@ -20,6 +25,46 @@ public class InicioController {
     @GetMapping("/login")
     public String login() {
         return "login";
+    }
+
+    @GetMapping("/catalogo")
+    public String catalogo(Model modelo) {
+        // Datos de ejemplo mientras la base de datos no está conectada.
+        // Cuando se conecte MySQL, esta lista se reemplaza por el repositorio de ofertas.
+        modelo.addAttribute("ofertas", List.of(
+                crearOferta("Día de playa en Barú",
+                        "Lancha ida y vuelta, almuerzo típico y tiempo libre en Playa Blanca.",
+                        "Playa", "Barú", "185000", 24, 2),
+                crearOferta("Snorkel en las Islas del Rosario",
+                        "Recorrido guiado por los arrecifes con equipo de snorkel incluido.",
+                        "Snorkel", "Islas del Rosario", "230000", 18, 3),
+                crearOferta("Atardecer en Tierra Bomba",
+                        "Paseo en lancha, música y cóctel de bienvenida frente al mar.",
+                        "Experiencia", "Tierra Bomba", "150000", 30, 4),
+                crearOferta("Tour de día completo por el Rosario",
+                        "Visita a las islas, paradas para nadar y almuerzo caribeño.",
+                        "Tour", "Islas del Rosario", "320000", 16, 2),
+                crearOferta("Paseo en lancha por la bahía",
+                        "Recorrido por la bahía de Cartagena con guía local a bordo.",
+                        "Transporte", "Cartagena", "95000", 40, 5),
+                crearOferta("Playa tranquila en Barú",
+                        "Acceso a playa privada, sombrilla y bebida de bienvenida.",
+                        "Playa", "Barú", "120000", 20, 6)));
+        return "catalogo";
+    }
+
+    private Oferta crearOferta(String nombre, String descripcion, String categoria, String isla,
+            String precio, int cuposMaximos, int idProveedor) {
+        Oferta oferta = new Oferta();
+        oferta.setNombreOferta(nombre);
+        oferta.setDescripcion(descripcion);
+        oferta.setCategoria(categoria);
+        oferta.setIsla(isla);
+        oferta.setPrecio(new BigDecimal(precio));
+        oferta.setCuposMaximos(cuposMaximos);
+        oferta.setEstadoOferta("Publicada");
+        oferta.setIdProveedor(idProveedor);
+        return oferta;
     }
 
     @GetMapping("/registro-turista")
@@ -69,6 +114,6 @@ public class InicioController {
     @PostMapping("/login")
     public String procesarLogin(@RequestParam String correo, @RequestParam String contrasena) {
         System.out.println("Intento de login - Correo: " + correo);
-        return "redirect:/"; 
+        return "redirect:/catalogo"; 
     }
 }

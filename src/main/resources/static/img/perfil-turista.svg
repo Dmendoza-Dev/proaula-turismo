@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+  <defs>
+    <clipPath id="circulo"><circle cx="48" cy="48" r="48"/></clipPath>
+  </defs>
+  <g clip-path="url(#circulo)">
+    <path fill="#F7F1E5" d="M0 0h96v96H0z"/>
+    <circle cx="76" cy="20" r="18" fill="#FFB06A"/>
+    <path fill="#0B4F6C" d="M12 96V85c0-19 16-33 36-33s36 14 36 33v11z"/>
+    <path fill="#D99B74" d="M39 49h18v15c-6 6-12 6-18 0z"/>
+    <ellipse cx="48" cy="36" rx="20" ry="24" fill="#EAB38D"/>
+    <path fill="#083A52" d="M27 36c-4-20 7-28 22-28 17 0 24 12 20 29-3-4-5-10-6-15-10 8-23 9-34 7z"/>
+    <path d="M41 46q7 5 14 0" fill="none" stroke="#9B5B40" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="39" cy="36" r="1.6" fill="#083A52"/>
+    <circle cx="57" cy="36" r="1.6" fill="#083A52"/>
+  </g>
+</svg>
