@@ -24,17 +24,20 @@ También se pueden pasar variables de entorno `DB_URL`, `DB_USERNAME` y
 ese archivo no trae datasource a propósito.
 
 ## 3. Arrancar
-Siempre con el perfil `mysql`:
+El perfil `mysql` ya está activo en `application.properties`, así que basta con:
 
 ```powershell
-.\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=mysql
+.\mvnw.cmd spring-boot:run
 ```
 
 O, sobre el JAR ya generado:
 
 ```powershell
-java -jar target\proaula-turismo-0.0.1-SNAPSHOT.jar --spring.profiles.active=mysql
+java -jar target\proaula-turismo-0.0.1-SNAPSHOT.jar
 ```
+
+Si se quiere forzar el perfil de forma explícita, también funciona:
+`.\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=mysql`.
 
 La aplicación queda en `http://localhost:8080`.
 
