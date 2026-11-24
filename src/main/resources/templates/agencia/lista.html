@@ -77,8 +77,8 @@
                                 th:text="${oferta.estadoOferta == 'Pendiente'} ? 'Pendiente de aprobación' : ${oferta.estadoOferta}">Pendiente</span>
                         </td>
                         <td>
-                            <a th:href="'/{rol}/editar?id=' + ${oferta.idOferta}" class="me-2">Editar</a>
-                            <a th:href="'/{rol}/eliminar?id=' + ${oferta.idOferta}">Eliminar</a>
+                            <a th:href="'/agencia/editar?id=' + ${oferta.idOferta}" class="me-2">Editar</a>
+                            <a th:href="'/agencia/eliminar?id=' + ${oferta.idOferta}">Eliminar</a>
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(ofertas)}">
