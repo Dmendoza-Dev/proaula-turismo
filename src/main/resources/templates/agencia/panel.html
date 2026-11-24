@@ -25,7 +25,7 @@
                         </button>
                         <ul class="perfil-menu">
                             <li><span class="perfil-encabezado">Mi cuenta</span></li>
-                            <li><a href="/">Cerrar sesión</a></li>
+                            <li><a href="/logout">Cerrar sesión</a></li>
                         </ul>
                     </div>
                 </div>
@@ -40,6 +40,37 @@
 
         <h2 class="mb-1">Panel de la agencia</h2>
         <p class="text-muted mb-4">Gestiona los paquetes y pasadías de tu agencia en las islas del Caribe.</p>
+
+        <div class="alert alert-success py-2" th:if="${mensaje}" th:text="${mensaje}">Listo.</div>
+        <div class="alert alert-danger py-2" th:if="${error}" th:text="${error}">Revisa los datos.</div>
+
+        <div class="row g-3 mb-3" th:if="${total != null}">
+            <div class="col-6 col-md-3"><div class="card h-100"><div class="card-body text-center">
+                <h3 class="h6">Mis ofertas</h3><p class="display-6 mb-0" th:text="${total}">0</p>
+            </div></div></div>
+            <div class="col-6 col-md-3"><div class="card h-100"><div class="card-body text-center">
+                <h3 class="h6">Pendientes</h3><p class="display-6 mb-0" th:text="${pendientes}">0</p>
+            </div></div></div>
+            <div class="col-6 col-md-3"><div class="card h-100"><div class="card-body text-center">
+                <h3 class="h6">Publicadas</h3><p class="display-6 mb-0" th:text="${publicadas}">0</p>
+            </div></div></div>
+            <div class="col-6 col-md-3"><div class="card h-100"><div class="card-body text-center">
+                <h3 class="h6">Rechazadas</h3><p class="display-6 mb-0" th:text="${rechazadas}">0</p>
+            </div></div></div>
+        </div>
+
+        <div class="card mb-4" th:if="${!#lists.isEmpty(recientes)}">
+            <div class="card-body">
+                <h3 class="h5 mb-3">Ofertas recientes</h3>
+                <ul class="list-unstyled mb-0">
+                    <li class="d-flex justify-content-between py-2 border-bottom" th:each="o : ${recientes}">
+                        <span th:text="${o.nombreOferta}">Oferta</span>
+                        <a th:href="'/proveedor/editar?id=' + ${o.idOferta}" th:if="${false}">Editar</a>
+                        <a th:href="'/agencia/editar?id=' + ${o.idOferta}">Editar</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
 
         <div class="row g-3">
             <div class="col-12 col-md-6">
@@ -65,7 +96,7 @@
                     <div class="card-body">
                         <h3 class="h5">Actualizar una oferta</h3>
                         <p class="text-muted">Modifica nombre, tarifa, cupos o disponibilidad de una oferta existente.</p>
-                        <a href="/agencia/editar" class="btn btn-secondary">Editar oferta</a>
+                        <a th:href="${#lists.isEmpty(recientes)} ? '#' : '/agencia/editar?id=' + ${recientes[0].idOferta}" class="btn btn-secondary">Editar oferta</a>
                     </div>
                 </div>
             </div>
@@ -74,7 +105,7 @@
                     <div class="card-body">
                         <h3 class="h5">Eliminar una oferta</h3>
                         <p class="text-muted">Retira un paquete o pasadía que ya no quieras ofrecer.</p>
-                        <a href="/agencia/eliminar" class="btn btn-danger">Eliminar oferta</a>
+                        <a th:href="${#lists.isEmpty(recientes)} ? '#' : '/agencia/eliminar?id=' + ${recientes[0].idOferta}" class="btn btn-danger">Eliminar oferta</a>
                     </div>
                 </div>
             </div>

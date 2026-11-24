@@ -1,6 +1,7 @@
 package co.edu.unicolombo.proaula_turismo.model;
 
 import java.math.BigDecimal;
+import java.time.LocalTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,6 +36,15 @@ public class Oferta {
 
     @Column(name = "Cupos_maximos", nullable = false)
     private Integer cuposMaximos;
+
+    @Column(name = "Dias_disponibles", length = 120)
+    private String diasDisponibles;
+
+    @Column(name = "Horario_inicio")
+    private LocalTime horarioInicio;
+
+    @Column(name = "Horario_fin")
+    private LocalTime horarioFin;
 
     @Column(name = "Estado_oferta", length = 20)
     private String estadoOferta;
@@ -99,6 +109,30 @@ public class Oferta {
 
     public void setCuposMaximos(Integer cuposMaximos) {
         this.cuposMaximos = cuposMaximos;
+    }
+
+    public String getDiasDisponibles() {
+        return diasDisponibles;
+    }
+
+    public void setDiasDisponibles(String diasDisponibles) {
+        this.diasDisponibles = diasDisponibles;
+    }
+
+    public LocalTime getHorarioInicio() {
+        return horarioInicio;
+    }
+
+    public void setHorarioInicio(LocalTime horarioInicio) {
+        this.horarioInicio = horarioInicio;
+    }
+
+    public LocalTime getHorarioFin() {
+        return horarioFin;
+    }
+
+    public void setHorarioFin(LocalTime horarioFin) {
+        this.horarioFin = horarioFin;
     }
 
     public String getEstadoOferta() {

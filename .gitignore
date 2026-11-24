@@ -34,3 +34,6 @@ build/
 
 ### Copias de seguridad locales de la base de datos ###
 database/backup-*.sql
+
+### Archivos subidos por los usuarios ###
+uploads/

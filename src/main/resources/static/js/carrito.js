@@ -50,10 +50,12 @@
         var contenedor = document.getElementById('carrito-items');
         var totalEl = document.getElementById('carrito-total');
         var pagarBtn = document.getElementById('carrito-pagar');
+        var ocultos = document.getElementById('carrito-items-hidden');
         if (!contenedor) return;
 
         var lista = leer();
         contenedor.innerHTML = '';
+        if (ocultos) ocultos.innerHTML = '';
 
         if (lista.length === 0) {
             var vacio = document.createElement('p');
@@ -75,18 +77,31 @@
                     '</div>' +
                     '<button type="button" class="carrito-item-quitar" data-idx="' + idx + '" aria-label="Quitar">&times;</button>';
                 contenedor.appendChild(item);
+
+                if (ocultos) {
+                    var idCampo = document.createElement('input');
+                    idCampo.type = 'hidden';
+                    idCampo.name = 'idOferta';
+                    idCampo.value = it.id;
+                    ocultos.appendChild(idCampo);
+
+                    var cantidadCampo = document.createElement('input');
+                    cantidadCampo.type = 'hidden';
+                    cantidadCampo.name = 'cantidad';
+                    cantidadCampo.value = it.cantidad;
+                    ocultos.appendChild(cantidadCampo);
+                }
             });
         }
 
         if (pagarBtn) {
             var vacio = lista.length === 0;
+            pagarBtn.disabled = vacio;
             pagarBtn.classList.toggle('disabled', vacio);
             pagarBtn.setAttribute('aria-disabled', String(vacio));
             if (vacio) {
-                pagarBtn.removeAttribute('href');
                 pagarBtn.setAttribute('tabindex', '-1');
             } else {
-                pagarBtn.setAttribute('href', '/turista/reserva');
                 pagarBtn.removeAttribute('tabindex');
             }
         }
@@ -207,8 +222,8 @@
         var vaciarBtn = document.getElementById('carrito-vaciar');
         if (vaciarBtn) vaciarBtn.addEventListener('click', vaciar);
 
-        var pagarBtn = document.getElementById('carrito-pagar');
-        if (pagarBtn) pagarBtn.addEventListener('click', function (event) {
+        var pagarForm = document.getElementById('carrito-pagar-form');
+        if (pagarForm) pagarForm.addEventListener('submit', function (event) {
             if (leer().length === 0) {
                 event.preventDefault();
                 renderPopup();

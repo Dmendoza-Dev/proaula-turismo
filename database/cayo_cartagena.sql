@@ -67,6 +67,9 @@ create table Oferta (
     Isla            varchar(100) not null,
     Precio          decimal(12,2) not null,
     Cupos_maximos   int not null,
+    Dias_disponibles varchar(120),
+    Horario_inicio  time,
+    Horario_fin     time,
     Estado_oferta   enum('Pendiente', 'Publicada', 'Rechazada', 'Cancelada')
                         default 'Pendiente',
     Id_proveedor    int not null,
@@ -74,6 +77,17 @@ create table Oferta (
     foreign key (Id_proveedor) references Usuario(Id_usuario),
     check (Precio > 0),
     check (Cupos_maximos > 0)
+);
+
+-- ------------------------------------------------------------
+-- Imágenes adjuntas a cada oferta
+-- ------------------------------------------------------------
+create table if not exists Oferta_imagen (
+    Id_imagen   int auto_increment primary key,
+    Id_oferta   int not null,
+    Ruta        varchar(255) not null,
+
+    foreign key (Id_oferta) references Oferta(Id_oferta) on delete cascade
 );
 
 -- ------------------------------------------------------------

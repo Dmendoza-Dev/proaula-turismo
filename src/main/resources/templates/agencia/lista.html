@@ -25,7 +25,7 @@
                         </button>
                         <ul class="perfil-menu">
                             <li><span class="perfil-encabezado">Mi cuenta</span></li>
-                            <li><a href="/">Cerrar sesión</a></li>
+                            <li><a href="/logout">Cerrar sesión</a></li>
                         </ul>
                     </div>
                 </div>
@@ -47,6 +47,9 @@
             <a href="/agencia/nueva" class="btn btn-success">+ Publicar nueva oferta</a>
         </div>
 
+        <div class="alert alert-success py-2" th:if="${mensaje}" th:text="${mensaje}">Listo.</div>
+        <div class="alert alert-danger py-2" th:if="${error}" th:text="${error}">Revisa los datos.</div>
+
         <div class="table-responsive">
             <table class="table table-hover align-middle">
                 <thead>
@@ -62,44 +65,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>Pasadía en las Islas del Rosario</td>
-                        <td>Pasadía</td>
-                        <td>Islas del Rosario</td>
-                        <td>$ 120.000</td>
-                        <td>30</td>
-                        <td>Pendiente de aprobación</td>
+                    <tr th:each="oferta : ${ofertas}">
+                        <td th:text="${oferta.idOferta}">1</td>
+                        <td th:text="${oferta.nombreOferta}">Oferta</td>
+                        <td th:text="${oferta.categoria}">Categoría</td>
+                        <td th:text="${oferta.isla}">Isla</td>
+                        <td th:text="|$ ${#numbers.formatDecimal(oferta.precio, 1, 'POINT', 0, 'COMMA')}|">$ 0</td>
+                        <td th:text="${oferta.cuposMaximos}">0</td>
                         <td>
-                            <a href="/agencia/editar" class="me-2">Editar</a>
-                            <a href="/agencia/eliminar">Eliminar</a>
+                            <span class="badge" th:classappend="${oferta.estadoOferta == 'Publicada'} ? 'bg-success' : (${oferta.estadoOferta == 'Rechazada' or oferta.estadoOferta == 'Cancelada'} ? 'bg-danger' : 'bg-warning text-dark')"
+                                th:text="${oferta.estadoOferta == 'Pendiente'} ? 'Pendiente de aprobación' : ${oferta.estadoOferta}">Pendiente</span>
+                        </td>
+                        <td>
+                            <a th:href="'/{rol}/editar?id=' + ${oferta.idOferta}" class="me-2">Editar</a>
+                            <a th:href="'/{rol}/eliminar?id=' + ${oferta.idOferta}">Eliminar</a>
                         </td>
                     </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>Paquete 2 noches en Barú</td>
-                        <td>Paquete turístico</td>
-                        <td>Barú</td>
-                        <td>$ 480.000</td>
-                        <td>12</td>
-                        <td>Publicada</td>
-                        <td>
-                            <a href="/agencia/editar" class="me-2">Editar</a>
-                            <a href="/agencia/eliminar">Eliminar</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>Transporte marítimo a Tierra Bomba</td>
-                        <td>Transporte marítimo</td>
-                        <td>Tierra Bomba</td>
-                        <td>$ 35.000</td>
-                        <td>50</td>
-                        <td>Pendiente de aprobación</td>
-                        <td>
-                            <a href="/agencia/editar" class="me-2">Editar</a>
-                            <a href="/agencia/eliminar">Eliminar</a>
-                        </td>
+                    <tr th:if="${#lists.isEmpty(ofertas)}">
+                        <td colspan="8" class="text-center text-muted py-4">Aún no tienes ofertas registradas.</td>
                     </tr>
                 </tbody>
             </table>

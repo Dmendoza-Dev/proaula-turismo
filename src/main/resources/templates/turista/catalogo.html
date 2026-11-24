@@ -32,7 +32,7 @@
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end catalogo-perfil-menu" aria-labelledby="menu-perfil">
                             <li><span class="dropdown-header">Mi cuenta</span></li>
-                            <li><a class="dropdown-item catalogo-perfil-salir" href="/">Cerrar sesión</a></li>
+                            <li><a class="dropdown-item catalogo-perfil-salir" href="/logout">Cerrar sesión</a></li>
                         </ul>
                     </div>
                 </nav>
@@ -40,6 +40,7 @@
         </div>
     </header>
     <div class="container">
+        <div class="alert alert-danger py-2 mt-3" th:if="${error}" th:text="${error}">Revisa los datos.</div>
         <div class="row">
             <div class="col-12">
                 <div class="carousel slide carousel-fade catalogo-portada"
@@ -98,6 +99,8 @@
                     <div class="col-12 col-sm-6 col-lg-4" th:each="oferta : ${ofertas}">
                         <article class="card h-100 catalogo-servicio">
                             <div class="catalogo-servicio-portada">
+                                <img class="catalogo-servicio-foto" th:if="${imagenesPorOferta[oferta.idOferta] != null}"
+                                     th:src="${imagenesPorOferta[oferta.idOferta]}" alt="">
                                 <span class="catalogo-servicio-categoria" th:text="${oferta.categoria}">Categoría</span>
                                 <span class="catalogo-servicio-isla" th:text="${oferta.isla}">Isla</span>
                             </div>
@@ -511,7 +514,10 @@
                 <span>Total</span>
                 <strong id="carrito-total">$ 0</strong>
             </div>
-            <a class="btn btn-success w-100 disabled" id="carrito-pagar" aria-disabled="true" tabindex="-1">Pagar itinerario</a>
+            <form action="/turista/reserva" method="post" id="carrito-pagar-form">
+                <div id="carrito-items-hidden"></div>
+                <button type="submit" class="btn btn-success w-100 disabled" id="carrito-pagar" aria-disabled="true" tabindex="-1">Pagar itinerario</button>
+            </form>
             <button type="button" class="btn btn-secondary w-100 mt-2" id="carrito-vaciar">Vaciar carrito</button>
         </div>
     </div>

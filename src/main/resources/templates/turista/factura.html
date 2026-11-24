@@ -25,7 +25,7 @@
                         </button>
                         <ul class="perfil-menu">
                             <li><span class="perfil-encabezado">Mi cuenta</span></li>
-                            <li><a href="/">Cerrar sesión</a></li>
+                            <li><a href="/logout">Cerrar sesión</a></li>
                         </ul>
                     </div>
                 </div>
@@ -46,77 +46,63 @@
                     <p class="text-muted mb-0">Comprobante de reserva</p>
                 </div>
                 <div class="text-end">
-                    <strong>Reserva #CC-2026-0142</strong>
+                    <strong th:text="|Reserva #${factura.numeroReserva}|">Reserva #CC-2026-0000</strong>
                     <br>
-                    <small class="text-muted">23 de noviembre de 2026, 14:30</small>
+                    <small class="text-muted" th:text="${#temporals.format(factura.reserva.fechaReserva, 'dd/MM/yyyy HH:mm')}">Fecha</small>
                 </div>
             </div>
 
             <dl class="factura-datos">
                 <dt>Turista</dt>
-                <dd>Juan Pérez</dd>
+                <dd th:text="${factura.cliente.nombres}">Nombre</dd>
                 <dt>Documento</dt>
-                <dd>1.234.567.890</dd>
+                <dd th:text="${factura.cliente.documento}">Documento</dd>
                 <dt>Correo</dt>
-                <dd>juan.perez@correo.com</dd>
+                <dd th:text="${factura.cliente.correo}">Correo</dd>
                 <dt>Destino</dt>
-                <dd>Barú y Rosario</dd>
+                <dd th:text="${factura.itinerario.destino}">Destino</dd>
                 <dt>Fecha de visita</dt>
-                <dd>27 de noviembre de 2026</dd>
+                <dd th:text="${#temporals.format(factura.itinerario.fechaVisita, 'dd/MM/yyyy')}">Fecha</dd>
                 <dt>Personas</dt>
-                <dd>4</dd>
+                <dd th:text="${factura.itinerario.numPersonas}">0</dd>
             </dl>
 
             <div class="table-responsive">
-            <table class="table table-sm mb-3">
-                <thead>
-                    <tr>
-                        <th>Oferta</th>
-                        <th>Categoría</th>
-                        <th class="text-center">Cant.</th>
-                        <th class="text-end">P. unitario</th>
-                        <th class="text-end">Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Día de playa en Barú</td>
-                        <td>Actividades</td>
-                        <td class="text-center">4</td>
-                        <td class="text-end">$ 185.000</td>
-                        <td class="text-end">$ 740.000</td>
-                    </tr>
-                    <tr>
-                        <td>Pasadía en las Islas del Rosario</td>
-                        <td>Pasadía</td>
-                        <td class="text-center">4</td>
-                        <td class="text-end">$ 120.000</td>
-                        <td class="text-end">$ 480.000</td>
-                    </tr>
-                    <tr>
-                        <td>Almuerzo típico en el Rosario</td>
-                        <td>Almuerzo</td>
-                        <td class="text-center">4</td>
-                        <td class="text-end">$ 45.000</td>
-                        <td class="text-end">$ 180.000</td>
-                    </tr>
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <th colspan="4" class="text-end">Total pagado</th>
-                        <th class="text-end factura-total">$ 1.400.000</th>
-                    </tr>
-                </tfoot>
-            </table>
+                <table class="table table-sm mb-3">
+                    <thead>
+                        <tr>
+                            <th>Oferta</th>
+                            <th>Categoría</th>
+                            <th class="text-center">Cant.</th>
+                            <th class="text-end">P. unitario</th>
+                            <th class="text-end">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${factura.items}">
+                            <td th:text="${item.nombreOferta}">Oferta</td>
+                            <td th:text="${item.categoria}">Categoría</td>
+                            <td class="text-center" th:text="${item.cantidad}">0</td>
+                            <td class="text-end" th:text="|$ ${#numbers.formatDecimal(item.precioUnitario, 1, 'POINT', 0, 'COMMA')}|">$ 0</td>
+                            <td class="text-end" th:text="|$ ${#numbers.formatDecimal(item.subtotal, 1, 'POINT', 0, 'COMMA')}|">$ 0</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="4" class="text-end">Total pagado</th>
+                            <th class="text-end factura-total" th:text="|$ ${#numbers.formatDecimal(factura.total, 1, 'POINT', 0, 'COMMA')}|">$ 0</th>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
 
             <dl class="factura-datos">
                 <dt>Método de pago</dt>
-                <dd>Tarjeta de crédito</dd>
+                <dd th:text="${factura.reserva.metodoPago}">Método</dd>
                 <dt>Estado del pago</dt>
-                <dd><span class="badge bg-success">Aprobado</span></dd>
+                <dd><span class="badge bg-success" th:text="${factura.reserva.estadoPago}">Aprobado</span></dd>
                 <dt>Estado de la reserva</dt>
-                <dd><span class="badge bg-primary">Pagada</span></dd>
+                <dd><span class="badge bg-primary" th:text="${factura.reserva.estadoReserva}">Pagada</span></dd>
             </dl>
 
             <div class="factura-pie">
@@ -130,5 +116,10 @@
             <a href="/catalogo" class="btn btn-secondary">Volver al catálogo</a>
         </div>
     </div>
+
+    <script>
+        // La reserva ya esta guardada: se limpia el carrito del navegador.
+        localStorage.removeItem('cayo_carrito');
+    </script>
 </body>
 </html>

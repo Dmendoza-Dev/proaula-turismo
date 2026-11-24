@@ -30,6 +30,8 @@
                     <a href="/#como-usar">Crea una</a>
                 </p>
 
+<div class="alert alert-danger py-2" th:if="${error}" th:text="${error}">Revisa los datos.</div>
+                <div class="alert alert-success py-2" th:if="${registroExitoso}" th:text="${registroExitoso}">Cuenta creada.</div>
                 <form action="/login" method="POST">
                     <div class="mb-3">
                         <label class="form-label" for="formEmail">Correo electrónico</label>
@@ -57,8 +59,8 @@
                 </form>
 
                 <p class="login-nota">
-                    Los proveedores y las agencias pueden ingresar mientras su cuenta es validada,
-                    pero no podrán publicar ofertas hasta ser aprobados.
+                    Proveedores y agencias pueden publicar ofertas: estas quedan pendientes de aprobación
+                    del supervisor antes de aparecer en el catálogo del turista.
                 </p>
             </div>
         </section>

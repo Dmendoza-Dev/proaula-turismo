@@ -1275,3 +1275,19 @@
     opacity: 1;
     pointer-events: auto;
 }
+
+.catalogo-servicio-foto {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: .35;
+    pointer-events: none;
+}
+
+.catalogo-servicio-categoria,
+.catalogo-servicio-isla {
+    position: relative;
+    z-index: 1;
+}

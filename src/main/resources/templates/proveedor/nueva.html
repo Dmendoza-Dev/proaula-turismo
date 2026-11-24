@@ -25,7 +25,7 @@
                         </button>
                         <ul class="perfil-menu">
                             <li><span class="perfil-encabezado">Mi cuenta</span></li>
-                            <li><a href="/">Cerrar sesión</a></li>
+                            <li><a href="/logout">Cerrar sesión</a></li>
                         </ul>
                     </div>
                 </div>
@@ -42,44 +42,47 @@
         <h2 class="mb-1">Publicar nueva oferta</h2>
         <p class="text-muted mb-4">Diligencia el formulario. Los campos obligatorios están marcados con *.</p>
 
+        <div class="alert alert-success py-2" th:if="${mensaje}" th:text="${mensaje}">Listo.</div>
+        <div class="alert alert-danger py-2" th:if="${error}" th:text="${error}">Revisa los datos.</div>
+
         <form action="/proveedor/lista" method="post" enctype="multipart/form-data">
             <div class="row g-3">
                 <div class="col-md-6">
                     <label for="categoria" class="form-label">Categoría del servicio *</label>
                     <select id="categoria" name="categoria" class="form-select" required>
                         <option value="">Selecciona una categoría</option>
-                        <option value="Alquiler de carpas y cabañas">Alquiler de carpas y cabañas</option>
-                        <option value="Almuerzo">Almuerzo</option>
-                        <option value="Hospedaje">Hospedaje</option>
-                        <option value="Actividades">Actividades</option>
+                        <option value="Alquiler de carpas y cabañas" th:selected="${oferta.categoria == 'Alquiler de carpas y cabañas'}">Alquiler de carpas y cabañas</option>
+                        <option value="Almuerzo" th:selected="${oferta.categoria == 'Almuerzo'}">Almuerzo</option>
+                        <option value="Hospedaje" th:selected="${oferta.categoria == 'Hospedaje'}">Hospedaje</option>
+                        <option value="Actividades" th:selected="${oferta.categoria == 'Actividades'}">Actividades</option>
                     </select>
                 </div>
                 <div class="col-md-6">
                     <label for="nombre" class="form-label">Nombre de la oferta *</label>
-                    <input type="text" id="nombre" name="nombre" class="form-control" maxlength="100" required>
+                    <input type="text" id="nombre" name="nombre" class="form-control" maxlength="100" required th:value="${oferta.nombreOferta}">
                 </div>
 
                 <div class="col-md-6">
                     <label for="descripcion" class="form-label">Descripción</label>
-                    <textarea id="descripcion" name="descripcion" class="form-control" maxlength="500" rows="4"></textarea>
+                    <textarea id="descripcion" name="descripcion" class="form-control" maxlength="500" rows="4" th:text="${oferta.descripcion}"></textarea>
                 </div>
                 <div class="col-md-6">
                     <label for="isla" class="form-label">Isla *</label>
                     <select id="isla" name="isla" class="form-select" required>
                         <option value="">Selecciona una isla</option>
-                        <option value="Islas del Rosario">Islas del Rosario</option>
-                        <option value="Barú">Barú</option>
-                        <option value="Tierra Bomba">Tierra Bomba</option>
+                        <option value="Islas del Rosario" th:selected="${oferta.isla == 'Islas del Rosario'}">Islas del Rosario</option>
+                        <option value="Barú" th:selected="${oferta.isla == 'Barú'}">Barú</option>
+                        <option value="Tierra Bomba" th:selected="${oferta.isla == 'Tierra Bomba'}">Tierra Bomba</option>
                     </select>
                 </div>
 
                 <div class="col-md-6">
                     <label for="tarifa" class="form-label">Tarifa *</label>
-                    <input type="number" id="tarifa" name="tarifa" class="form-control" min="0.01" step="0.01" required>
+                    <input type="number" id="tarifa" name="tarifa" class="form-control" min="0.01" step="0.01" required th:value="${oferta.precio}">
                 </div>
                 <div class="col-md-6">
                     <label for="cupos" class="form-label">Cupos o capacidad máxima diaria *</label>
-                    <input type="number" id="cupos" name="cupos" class="form-control" min="1" step="1" required>
+                    <input type="number" id="cupos" name="cupos" class="form-control" min="1" step="1" required th:value="${oferta.cuposMaximos}">
                 </div>
 
                 <div class="col-12">
@@ -88,23 +91,23 @@
                 <div class="col-12">
                     <label class="form-label d-block">Días disponibles:</label>
                     <div class="d-flex flex-wrap gap-3">
-                        <div class="form-check"><input class="form-check-input" type="checkbox" name="dias" value="Lunes" id="diaLunes"><label class="form-check-label" for="diaLunes">Lunes</label></div>
-                        <div class="form-check"><input class="form-check-input" type="checkbox" name="dias" value="Martes" id="diaMartes"><label class="form-check-label" for="diaMartes">Martes</label></div>
-                        <div class="form-check"><input class="form-check-input" type="checkbox" name="dias" value="Miercoles" id="diaMiercoles"><label class="form-check-label" for="diaMiercoles">Miércoles</label></div>
-                        <div class="form-check"><input class="form-check-input" type="checkbox" name="dias" value="Jueves" id="diaJueves"><label class="form-check-label" for="diaJueves">Jueves</label></div>
-                        <div class="form-check"><input class="form-check-input" type="checkbox" name="dias" value="Viernes" id="diaViernes"><label class="form-check-label" for="diaViernes">Viernes</label></div>
-                        <div class="form-check"><input class="form-check-input" type="checkbox" name="dias" value="Sabado" id="diaSabado"><label class="form-check-label" for="diaSabado">Sábado</label></div>
-                        <div class="form-check"><input class="form-check-input" type="checkbox" name="dias" value="Domingo" id="diaDomingo"><label class="form-check-label" for="diaDomingo">Domingo</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" name="dias" value="Lunes" id="diaLunes" th:checked="${oferta.diasDisponibles != null and #strings.contains(oferta.diasDisponibles, 'Lunes')}"><label class="form-check-label" for="diaLunes">Lunes</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" name="dias" value="Martes" id="diaMartes" th:checked="${oferta.diasDisponibles != null and #strings.contains(oferta.diasDisponibles, 'Martes')}"><label class="form-check-label" for="diaMartes">Martes</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" name="dias" value="Miercoles" id="diaMiercoles" th:checked="${oferta.diasDisponibles != null and #strings.contains(oferta.diasDisponibles, 'Miercoles')}"><label class="form-check-label" for="diaMiercoles">Miércoles</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" name="dias" value="Jueves" id="diaJueves" th:checked="${oferta.diasDisponibles != null and #strings.contains(oferta.diasDisponibles, 'Jueves')}"><label class="form-check-label" for="diaJueves">Jueves</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" name="dias" value="Viernes" id="diaViernes" th:checked="${oferta.diasDisponibles != null and #strings.contains(oferta.diasDisponibles, 'Viernes')}"><label class="form-check-label" for="diaViernes">Viernes</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" name="dias" value="Sabado" id="diaSabado" th:checked="${oferta.diasDisponibles != null and #strings.contains(oferta.diasDisponibles, 'Sabado')}"><label class="form-check-label" for="diaSabado">Sábado</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" name="dias" value="Domingo" id="diaDomingo" th:checked="${oferta.diasDisponibles != null and #strings.contains(oferta.diasDisponibles, 'Domingo')}"><label class="form-check-label" for="diaDomingo">Domingo</label></div>
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <label for="horarioInicio" class="form-label">Horario desde</label>
-                    <input type="time" id="horarioInicio" name="horarioInicio" class="form-control">
+                    <input type="time" id="horarioInicio" name="horarioInicio" class="form-control" th:value="${oferta.horarioInicio}">
                 </div>
                 <div class="col-md-6">
                     <label for="horarioFin" class="form-label">Horario hasta</label>
-                    <input type="time" id="horarioFin" name="horarioFin" class="form-control">
+                    <input type="time" id="horarioFin" name="horarioFin" class="form-control" th:value="${oferta.horarioFin}">
                 </div>
 
                 <div class="col-12">

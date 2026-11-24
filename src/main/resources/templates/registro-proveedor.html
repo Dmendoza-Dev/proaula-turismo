@@ -30,6 +30,7 @@
                     <a href="/login">Iniciar sesión</a>
                 </p>
 
+<div class="alert alert-danger py-2" th:if="${error}" th:text="${error}">Revisa los datos.</div>
                 <form action="/registro" method="POST">
                     <input type="hidden" name="tipoUsuario" value="Proveedor">
 
