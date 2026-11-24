@@ -1,4 +1,9 @@
-create database if not exists CayoCartagena;
+-- ------------------------------------------------------------
+-- Cayo Cartagena - esquema completo (9 tablas)
+-- Ejecutar una sola vez sobre una base vacia.
+-- ------------------------------------------------------------
+create database if not exists CayoCartagena
+    character set utf8mb4 collate utf8mb4_unicode_ci;
 use CayoCartagena;
 
 -- ------------------------------------------------------------
@@ -147,3 +152,13 @@ create table Reserva (
     check (Valor_total >= 0),
     check (Valor_reembolso >= 0)
 );
+
+-- ------------------------------------------------------------
+-- Usuario supervisor para la revision de ofertas.
+-- Contrasena: Supervisor123 (texto plano, prototipo academico).
+-- ------------------------------------------------------------
+insert into Usuario
+    (Nombres, Apellidos, Documento, Correo, Telefono, Contrasena, Tipo_usuario)
+values
+    ('Supervisor', 'Operativo', '900001', 'supervisor@cayocartagena.com', '3000000001',
+     'Supervisor123', 'Supervisor');
