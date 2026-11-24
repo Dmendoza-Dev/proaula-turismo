@@ -1,5 +1,6 @@
 package co.edu.unicolombo.proaula_turismo.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,5 +11,5 @@ public interface OfertaImagenRepository extends JpaRepository<OfertaImagen, Inte
 
     List<OfertaImagen> findByIdOferta(Integer idOferta);
 
-    void deleteByIdOferta(Integer idOferta);
+    List<OfertaImagen> findByIdOfertaIn(Collection<Integer> ids);
 }

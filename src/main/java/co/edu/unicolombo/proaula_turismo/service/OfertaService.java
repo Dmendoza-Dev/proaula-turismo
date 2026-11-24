@@ -1,13 +1,15 @@
 package co.edu.unicolombo.proaula_turismo.service;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import co.edu.unicolombo.proaula_turismo.model.DetalleItinerario;
 import co.edu.unicolombo.proaula_turismo.model.Oferta;
 import co.edu.unicolombo.proaula_turismo.model.OfertaImagen;
 import co.edu.unicolombo.proaula_turismo.repository.DetalleItinerarioRepository;
@@ -38,12 +40,13 @@ public class OfertaService {
 
     @Transactional
     public Oferta crear(OfertaForm datos, Integer idUsuario) {
+        OfertaForm validos = ReglasOferta.normalizarYValidar(datos);
         Oferta oferta = new Oferta();
-        aplicar(datos, oferta);
+        aplicar(validos, oferta);
         oferta.setEstadoOferta(PENDIENTE);
         oferta.setIdProveedor(idUsuario);
         ofertas.save(oferta);
-        guardarImagenes(datos.imagenes(), oferta.getIdOferta());
+        guardarImagenes(validos.imagenes(), oferta.getIdOferta());
         return oferta;
     }
 
@@ -54,13 +57,14 @@ public class OfertaService {
         if (!oferta.getIdProveedor().equals(idUsuario)) {
             throw new IllegalArgumentException("No puedes editar una oferta de otro publicador.");
         }
-        aplicar(datos, oferta);
+        OfertaForm validos = ReglasOferta.normalizarYValidar(datos);
+        aplicar(validos, oferta);
         // Toda modificacion vuelve a auditoria.
         oferta.setEstadoOferta(PENDIENTE);
         ofertas.save(oferta);
-        if (datos.imagenes() != null && !datos.imagenes().isEmpty()) {
+        if (tieneImagenes(validos.imagenes())) {
             borrarImagenes(idOferta);
-            guardarImagenes(datos.imagenes(), idOferta);
+            guardarImagenes(validos.imagenes(), idOferta);
         }
         return oferta;
     }
@@ -72,10 +76,7 @@ public class OfertaService {
         if (!oferta.getIdProveedor().equals(idUsuario)) {
             throw new IllegalArgumentException("No puedes eliminar una oferta de otro publicador.");
         }
-        List<DetalleItinerario> usos = detalles.findAll().stream()
-                .filter(d -> d.getIdOferta().equals(idOferta))
-                .toList();
-        if (!usos.isEmpty()) {
+        if (detalles.existsByIdOferta(idOferta)) {
             // Ya forma parte de un itinerario: se retira del catalogo sin borrar el historial.
             oferta.setEstadoOferta(CANCELADA);
             ofertas.save(oferta);
@@ -130,20 +131,21 @@ public class OfertaService {
         return imagenes.findByIdOferta(idOferta);
     }
 
-    private void aplicar(OfertaForm datos, Oferta oferta) {
-        if (datos.nombre() == null || datos.nombre().isBlank()
-                || datos.categoria() == null || datos.categoria().isBlank()
-                || datos.isla() == null || datos.isla().isBlank()) {
-            throw new IllegalArgumentException("Nombre, categoria e isla son obligatorios.");
+    /** Primera imagen de cada oferta en una sola consulta (evita N+1 en el catalogo). */
+    public Map<Integer, String> imagenesPrincipales(List<Oferta> lista) {
+        Map<Integer, String> resultado = new LinkedHashMap<>();
+        if (lista == null || lista.isEmpty()) {
+            return resultado;
         }
-        if (datos.tarifa() == null || datos.tarifa().signum() <= 0) {
-            throw new IllegalArgumentException("La tarifa debe ser mayor a cero.");
+        List<Integer> ids = lista.stream().map(Oferta::getIdOferta).toList();
+        for (OfertaImagen imagen : imagenes.findByIdOfertaIn(ids)) {
+            resultado.putIfAbsent(imagen.getIdOferta(), imagen.getRuta());
         }
-        if (datos.cupos() == null || datos.cupos() < 1) {
-            throw new IllegalArgumentException("Los cupos deben ser al menos 1.");
-        }
+        return resultado;
+    }
 
-        oferta.setNombreOferta(datos.nombre().trim());
+    private void aplicar(OfertaForm datos, Oferta oferta) {
+        oferta.setNombreOferta(datos.nombre());
         oferta.setDescripcion(datos.descripcion());
         oferta.setCategoria(datos.categoria());
         oferta.setIsla(datos.isla());
@@ -151,27 +153,42 @@ public class OfertaService {
         oferta.setCuposMaximos(datos.cupos());
         oferta.setDiasDisponibles(datos.dias() == null || datos.dias().isEmpty()
                 ? null : String.join(", ", datos.dias()));
-        oferta.setHorarioInicio(parsearHora(datos.horarioInicio()));
-        oferta.setHorarioFin(parsearHora(datos.horarioFin()));
+        oferta.setHorarioInicio(hora(datos.horarioInicio()));
+        oferta.setHorarioFin(hora(datos.horarioFin()));
     }
 
-    private LocalTime parsearHora(String valor) {
-        return valor == null || valor.isBlank() ? null : LocalTime.parse(valor);
+    private LocalTime hora(String valor) {
+        return ReglasOferta.hora(valor);
     }
 
-    private void guardarImagenes(List<MultipartFile> archivosSubidos, Integer idOferta) {
-        if (archivosSubidos == null) {
+    private boolean tieneImagenes(List<MultipartFile> subidos) {
+        return subidos != null && subidos.stream().anyMatch(a -> a != null && !a.isEmpty());
+    }
+
+    private void guardarImagenes(List<MultipartFile> subidos, Integer idOferta) {
+        if (subidos == null) {
             return;
         }
-        for (MultipartFile archivo : archivosSubidos) {
-            if (archivo == null || archivo.isEmpty()) {
-                continue;
+        List<String> rutasGuardadas = new ArrayList<>();
+        try {
+            for (MultipartFile archivo : subidos) {
+                if (archivo == null || archivo.isEmpty()) {
+                    continue;
+                }
+                String ruta = archivos.guardar(archivo, "oferta-" + idOferta);
+                if (ruta == null) {
+                    continue;
+                }
+                rutasGuardadas.add(ruta);
+                OfertaImagen imagen = new OfertaImagen();
+                imagen.setIdOferta(idOferta);
+                imagen.setRuta(ruta);
+                imagenes.save(imagen);
             }
-            String ruta = archivos.guardar(archivo, "oferta-" + idOferta);
-            OfertaImagen imagen = new OfertaImagen();
-            imagen.setIdOferta(idOferta);
-            imagen.setRuta(ruta);
-            imagenes.save(imagen);
+        } catch (RuntimeException e) {
+            // Si la transaccion falla, no se dejan archivos huerfanos en uploads/.
+            rutasGuardadas.forEach(archivos::borrar);
+            throw e;
         }
     }
 

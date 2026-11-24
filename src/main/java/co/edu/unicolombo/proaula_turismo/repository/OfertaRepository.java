@@ -11,6 +11,4 @@ public interface OfertaRepository extends JpaRepository<Oferta, Integer> {
     List<Oferta> findByEstadoOfertaOrderByIdOfertaDesc(String estadoOferta);
 
     List<Oferta> findByIdProveedorOrderByIdOfertaDesc(Integer idProveedor);
-
-    List<Oferta> findByEstadoOfertaAndIdProveedorOrderByIdOfertaDesc(String estadoOferta, Integer idProveedor);
 }

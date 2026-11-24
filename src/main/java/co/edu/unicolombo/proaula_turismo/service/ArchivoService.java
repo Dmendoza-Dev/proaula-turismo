@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -49,13 +48,6 @@ public class ArchivoService {
             throw new IllegalStateException("No se pudo guardar el archivo.", e);
         }
         return "/uploads/" + nombre;
-    }
-
-    public void guardar(List<MultipartFile> archivos, Integer idOferta, String prefijo) {
-        // El nombre incluye el id para poder borrar las imagenes de una oferta.
-        for (MultipartFile archivo : archivos) {
-            guardar(archivo, prefijo + "-" + idOferta);
-        }
     }
 
     public Path resolver(String nombre) {

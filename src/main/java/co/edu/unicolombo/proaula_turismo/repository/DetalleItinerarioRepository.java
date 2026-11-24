@@ -10,5 +10,5 @@ public interface DetalleItinerarioRepository extends JpaRepository<DetalleItiner
 
     List<DetalleItinerario> findByIdItinerario(Integer idItinerario);
 
-    void deleteByIdItinerario(Integer idItinerario);
+    boolean existsByIdOferta(Integer idOferta);
 }

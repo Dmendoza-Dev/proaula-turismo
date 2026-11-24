@@ -39,6 +39,8 @@ public class ProveedorController {
                 .filter(o -> OfertaService.PUBLICADA.equals(o.getEstadoOferta())).count());
         modelo.addAttribute("rechazadas", propias.stream()
                 .filter(o -> OfertaService.RECHAZADA.equals(o.getEstadoOferta())).count());
+        modelo.addAttribute("canceladas", propias.stream()
+                .filter(o -> OfertaService.CANCELADA.equals(o.getEstadoOferta())).count());
         modelo.addAttribute("recientes", propias.stream().limit(4).toList());
         return "proveedor/panel";
     }
