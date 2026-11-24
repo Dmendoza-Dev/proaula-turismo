@@ -32,30 +32,31 @@ public class InicioController {
         // Datos de ejemplo mientras la base de datos no está conectada.
         // Cuando se conecte MySQL, esta lista se reemplaza por el repositorio de ofertas.
         modelo.addAttribute("ofertas", List.of(
-                crearOferta("Día de playa en Barú",
+                crearOferta(1, "Día de playa en Barú",
                         "Lancha ida y vuelta, almuerzo típico y tiempo libre en Playa Blanca.",
                         "Playa", "Barú", "185000", 24, 2),
-                crearOferta("Snorkel en las Islas del Rosario",
+                crearOferta(2, "Snorkel en las Islas del Rosario",
                         "Recorrido guiado por los arrecifes con equipo de snorkel incluido.",
                         "Snorkel", "Islas del Rosario", "230000", 18, 3),
-                crearOferta("Atardecer en Tierra Bomba",
+                crearOferta(3, "Atardecer en Tierra Bomba",
                         "Paseo en lancha, música y cóctel de bienvenida frente al mar.",
                         "Experiencia", "Tierra Bomba", "150000", 30, 4),
-                crearOferta("Tour de día completo por el Rosario",
+                crearOferta(4, "Tour de día completo por el Rosario",
                         "Visita a las islas, paradas para nadar y almuerzo caribeño.",
                         "Tour", "Islas del Rosario", "320000", 16, 2),
-                crearOferta("Paseo en lancha por la bahía",
+                crearOferta(5, "Paseo en lancha por la bahía",
                         "Recorrido por la bahía de Cartagena con guía local a bordo.",
                         "Transporte", "Cartagena", "95000", 40, 5),
-                crearOferta("Playa tranquila en Barú",
+                crearOferta(6, "Playa tranquila en Barú",
                         "Acceso a playa privada, sombrilla y bebida de bienvenida.",
                         "Playa", "Barú", "120000", 20, 6)));
-        return "catalogo";
+        return "turista/catalogo";
     }
 
-    private Oferta crearOferta(String nombre, String descripcion, String categoria, String isla,
+    private Oferta crearOferta(int idOferta, String nombre, String descripcion, String categoria, String isla,
             String precio, int cuposMaximos, int idProveedor) {
         Oferta oferta = new Oferta();
+        oferta.setIdOferta(idOferta);
         oferta.setNombreOferta(nombre);
         oferta.setDescripcion(descripcion);
         oferta.setCategoria(categoria);
@@ -66,6 +67,64 @@ public class InicioController {
         oferta.setIdProveedor(idProveedor);
         return oferta;
     }
+
+    // --- Flujo del proveedor ---
+    @GetMapping("/proveedor/panel")
+    public String proveedorPanel() { return "proveedor/panel"; }
+
+    @GetMapping("/proveedor/nueva")
+    public String proveedorNueva() { return "proveedor/nueva"; }
+
+    @GetMapping("/proveedor/lista")
+    public String proveedorLista() { return "proveedor/lista"; }
+
+    @PostMapping("/proveedor/lista")
+    public String procesarOfertaProveedor() {
+        // Provisional: recibe el envío; el guardado se implementará con el servicio.
+        return "redirect:/proveedor/lista";
+    }
+
+    @GetMapping("/proveedor/editar")
+    public String proveedorEditar() { return "proveedor/editar"; }
+
+    @GetMapping("/proveedor/eliminar")
+    public String proveedorEliminar() { return "proveedor/eliminar"; }
+
+    // --- Flujo de la agencia ---
+    @GetMapping("/agencia/panel")
+    public String agenciaPanel() { return "agencia/panel"; }
+
+    @GetMapping("/agencia/nueva")
+    public String agenciaNueva() { return "agencia/nueva"; }
+
+    @GetMapping("/agencia/lista")
+    public String agenciaLista() { return "agencia/lista"; }
+
+    @PostMapping("/agencia/lista")
+    public String procesarOfertaAgencia() {
+        // Provisional: recibe el envío; el guardado se implementará con el servicio.
+        return "redirect:/agencia/lista";
+    }
+
+    @GetMapping("/agencia/editar")
+    public String agenciaEditar() { return "agencia/editar"; }
+
+    @GetMapping("/agencia/eliminar")
+    public String agenciaEliminar() { return "agencia/eliminar"; }
+
+    // --- Flujo del supervisor ---
+    @GetMapping("/supervisor/panel")
+    public String supervisorPanel() { return "supervisor/panel"; }
+
+    @GetMapping("/supervisor/lista")
+    public String supervisorLista() { return "supervisor/lista"; }
+
+    // --- Flujo del turista ---
+    @GetMapping("/turista/reserva")
+    public String turistaReserva() { return "turista/reserva"; }
+
+    @GetMapping("/turista/factura")
+    public String turistaFactura() { return "turista/factura"; }
 
     @GetMapping("/registro-turista")
     public String registro() {
@@ -117,3 +176,5 @@ public class InicioController {
         return "redirect:/catalogo"; 
     }
 }
+
+

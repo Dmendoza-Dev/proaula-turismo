@@ -97,7 +97,7 @@ create table Itinerario (
 
 -- ------------------------------------------------------------
 -- Ofertas que forman parte de cada itinerario
---------------------------------------------------------------
+-- ------------------------------------------------------------
 create table Detalle_Itinerario (
     Id_detalle      int auto_increment primary key,
     Cantidad        int not null,

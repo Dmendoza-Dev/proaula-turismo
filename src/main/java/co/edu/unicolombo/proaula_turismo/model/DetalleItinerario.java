@@ -16,7 +16,7 @@ import jakarta.persistence.UniqueConstraint;
         uniqueConstraints = @UniqueConstraint(columnNames = { "Id_itinerario", "Id_oferta" })
 )
 public class DetalleItinerario {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id_detalle")

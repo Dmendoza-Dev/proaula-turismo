@@ -116,7 +116,12 @@
                                     </div>
                                 </dl>
                                 <div class="catalogo-servicio-acciones">
-                                    <a class="catalogo-servicio-reservar" href="#" role="button">Reservar</a>
+                                    <button type="button" class="catalogo-servicio-reservar agregar-carrito"
+                                            th:data-id="${oferta.idOferta}"
+                                            th:data-nombre="${oferta.nombreOferta}"
+                                            th:data-categoria="${oferta.categoria}"
+                                            th:data-isla="${oferta.isla}"
+                                            th:data-precio="${oferta.precio}">Agregar al itinerario</button>
                                     <a class="catalogo-servicio-detalle" href="#" role="button">Ver detalle</a>
                                 </div>
                             </div>
@@ -484,7 +489,33 @@
         </section>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/catalogo.js"></script>
+    <script src="/js/catalogo.js"></script>
+    <script src="/js/carrito.js"></script>
+
+    <!-- Carrito flotante -->
+    <button type="button" class="carrito-flotante" id="carrito-boton" aria-label="Abrir carrito del itinerario" aria-controls="carrito-panel" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+        <span class="carrito-badge" id="carrito-contador">0</span>
+    </button>
+
+    <div class="carrito-panel" id="carrito-panel">
+        <div class="carrito-panel-cabecera">
+            <h3>Tu itinerario</h3>
+            <button type="button" class="carrito-cerrar" id="carrito-cerrar" aria-label="Cerrar carrito">&times;</button>
+        </div>
+        <div class="carrito-panel-cuerpo" id="carrito-items">
+            <p class="carrito-vacio">Aún no has agregado servicios.</p>
+        </div>
+        <div class="carrito-panel-pie">
+            <div class="carrito-total">
+                <span>Total</span>
+                <strong id="carrito-total">$ 0</strong>
+            </div>
+            <a class="btn btn-success w-100 disabled" id="carrito-pagar" aria-disabled="true" tabindex="-1">Pagar itinerario</a>
+            <button type="button" class="btn btn-secondary w-100 mt-2" id="carrito-vaciar">Vaciar carrito</button>
+        </div>
+    </div>
+    <div class="carrito-overlay" id="carrito-overlay"></div>
 </body>
 
 </html>

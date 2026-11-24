@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Factura de reserva | Cayo Cartagena</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/flujo.css">
+</head>
+<body>
+    <header class="proveedor-cabecera no-print">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-6 d-flex align-items-center gap-2">
+                    <img src="/img/logo.png" alt="" width="40" class="puerto">
+                    <div>
+                        <h1 class="h4 mb-0">Cayo Cartagena</h1>
+                        <small>Turista</small>
+                    </div>
+                </div>
+                <div class="col-6 text-end">
+                    <div class="perfil d-inline-block">
+                        <button type="button" class="perfil-boton" aria-label="Abrir menú de perfil">
+                            <img src="/img/perfil-turista.svg" alt="Perfil" width="40" class="rounded-circle">
+                        </button>
+                        <ul class="perfil-menu">
+                            <li><span class="perfil-encabezado">Mi cuenta</span></li>
+                            <li><a href="/">Cerrar sesión</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container py-4">
+        <ul class="nav nav-pills mb-4 no-print">
+            <li class="nav-item"><a class="nav-link" href="/catalogo">Catálogo</a></li>
+            <li class="nav-item"><a class="nav-link active" href="/turista/factura">Factura</a></li>
+        </ul>
+
+        <div class="factura">
+            <div class="factura-encabezado">
+                <div>
+                    <h1>Cayo Cartagena</h1>
+                    <p class="text-muted mb-0">Comprobante de reserva</p>
+                </div>
+                <div class="text-end">
+                    <strong>Reserva #CC-2026-0142</strong>
+                    <br>
+                    <small class="text-muted">23 de noviembre de 2026, 14:30</small>
+                </div>
+            </div>
+
+            <dl class="factura-datos">
+                <dt>Turista</dt>
+                <dd>Juan Pérez</dd>
+                <dt>Documento</dt>
+                <dd>1.234.567.890</dd>
+                <dt>Correo</dt>
+                <dd>juan.perez@correo.com</dd>
+                <dt>Destino</dt>
+                <dd>Barú y Rosario</dd>
+                <dt>Fecha de visita</dt>
+                <dd>27 de noviembre de 2026</dd>
+                <dt>Personas</dt>
+                <dd>4</dd>
+            </dl>
+
+            <div class="table-responsive">
+            <table class="table table-sm mb-3">
+                <thead>
+                    <tr>
+                        <th>Oferta</th>
+                        <th>Categoría</th>
+                        <th class="text-center">Cant.</th>
+                        <th class="text-end">P. unitario</th>
+                        <th class="text-end">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Día de playa en Barú</td>
+                        <td>Actividades</td>
+                        <td class="text-center">4</td>
+                        <td class="text-end">$ 185.000</td>
+                        <td class="text-end">$ 740.000</td>
+                    </tr>
+                    <tr>
+                        <td>Pasadía en las Islas del Rosario</td>
+                        <td>Pasadía</td>
+                        <td class="text-center">4</td>
+                        <td class="text-end">$ 120.000</td>
+                        <td class="text-end">$ 480.000</td>
+                    </tr>
+                    <tr>
+                        <td>Almuerzo típico en el Rosario</td>
+                        <td>Almuerzo</td>
+                        <td class="text-center">4</td>
+                        <td class="text-end">$ 45.000</td>
+                        <td class="text-end">$ 180.000</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4" class="text-end">Total pagado</th>
+                        <th class="text-end factura-total">$ 1.400.000</th>
+                    </tr>
+                </tfoot>
+            </table>
+            </div>
+
+            <dl class="factura-datos">
+                <dt>Método de pago</dt>
+                <dd>Tarjeta de crédito</dd>
+                <dt>Estado del pago</dt>
+                <dd><span class="badge bg-success">Aprobado</span></dd>
+                <dt>Estado de la reserva</dt>
+                <dd><span class="badge bg-primary">Pagada</span></dd>
+            </dl>
+
+            <div class="factura-pie">
+                <p>Gracias por confiar en Cayo Cartagena. Presenta este comprobante al llegar a tu destino.</p>
+                <p class="mb-0">Términos y condiciones aplican. Para cancelaciones, consulta nuestra política de reembolsos.</p>
+            </div>
+        </div>
+
+        <div class="text-center mt-4 no-print">
+            <button class="btn btn-primary me-2" type="button" onclick="window.print()">Imprimir / Guardar como PDF</button>
+            <a href="/catalogo" class="btn btn-secondary">Volver al catálogo</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -30,7 +30,7 @@
                     <a href="/#como-usar">Crea una</a>
                 </p>
 
-                <form action="/login" method="POST" novalidate>
+                <form action="/login" method="POST">
                     <div class="mb-3">
                         <label class="form-label" for="formEmail">Correo electrónico</label>
                         <input class="form-control login-input" type="email" id="formEmail" name="correo" placeholder="tucorreo@ejemplo.com" autocomplete="email" required />
@@ -50,7 +50,7 @@
                             <input class="form-check-input" type="checkbox" id="recordarme">
                             <label class="form-check-label" for="recordarme">Recordarme</label>
                         </div>
-                        <a href="/recuperar" class="login-enlace">¿Olvidaste tu contraseña?</a>
+                        <span class="login-enlace" aria-disabled="true" title="Recuperación de contraseña pendiente de implementación">¿Olvidaste tu contraseña?</span>
                     </div>
 
                     <button class="btn btn-isla w-100" type="submit">Iniciar sesión</button>

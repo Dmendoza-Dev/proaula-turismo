@@ -1,0 +1,431 @@
+@import url("https://fonts.googleapis.com/css2?family=Momo+Trust+Display&family=Varela+Round&display=swap");
+
+:root {
+    --bs-primary: #0B4F6C;
+    --bs-primary-rgb: 11, 79, 108;
+    --bs-success: #C2410C;
+    --bs-success-rgb: 194, 65, 12;
+    --bs-danger: #b3261e;
+    --bs-danger-rgb: 179, 38, 30;
+    --bs-warning: #FFB06A;
+    --bs-warning-rgb: 255, 176, 106;
+    --bs-body-font-family: "Varela Round", "Trebuchet MS", sans-serif;
+    --bs-body-color: #083A52;
+    --bs-tertiary-bg: #F7F1E5;
+    --azul: #0B4F6C;
+    --azul-claro: #1D5F7C;
+    --azul-oscuro: #083A52;
+    --naranja: #C2410C;
+    --naranja-oscuro: #A8370A;
+    --naranja-claro: #FFB06A;
+    --arena: #F7F1E5;
+    --borde: rgba(11, 79, 108, 0.16);
+    --sombra: 0 12px 30px rgba(8, 58, 82, 0.10);
+}
+
+body {
+    background: linear-gradient(160deg, #eef5f8 0%, #F7F1E5 100%);
+    min-height: 100vh;
+}
+
+img.puerto {
+    filter: brightness(0) invert(1);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Momo Trust Display", Georgia, serif;
+    font-weight: 400;
+    color: #083A52;
+}
+
+/* ===== Cabecera (ancho completo) ===== */
+.proveedor-cabecera {
+    padding: 18px 24px;
+    border-radius: 0;
+    background: var(--azul);
+    box-shadow: 0 4px 12px rgba(8, 58, 82, .15);
+    color: #fff;
+    margin-bottom: 16px;
+}
+
+.proveedor-cabecera h1,
+.proveedor-cabecera small,
+.proveedor-cabecera a {
+    color: #fff;
+}
+
+.proveedor-cabecera img.rounded-circle {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* ===== Navegación ===== */
+.nav-pills .nav-link {
+    color: var(--azul);
+    border-radius: 999px;
+    font-weight: 600;
+    transition: background .2s ease, color .2s ease, transform .2s ease;
+}
+
+.nav-pills .nav-link.active {
+    background-color: var(--azul);
+    color: #fff;
+}
+
+.nav-pills .nav-link:hover:not(.active) {
+    background-color: rgba(11, 79, 108, .08);
+    color: var(--naranja);
+}
+
+/* ===== Tarjetas ===== */
+.card {
+    border: 1px solid var(--borde);
+    border-radius: 18px;
+    box-shadow: var(--sombra);
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    border-color: var(--naranja-claro);
+    box-shadow: 0 16px 32px rgba(8, 58, 82, .14);
+}
+
+.card-body h3,
+.card-body h5 {
+    color: var(--azul-oscuro);
+}
+
+/* ===== Tabla ===== */
+.table {
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background-color: var(--azul);
+    color: #fff;
+    font-size: .85rem;
+    letter-spacing: .03em;
+    border: none;
+}
+
+.table tbody td {
+    border-top: 1px solid rgba(11, 79, 108, .1);
+}
+
+.table tbody tr:hover {
+    background-color: rgba(255, 176, 106, .12);
+}
+
+.table tbody td a {
+    color: var(--azul);
+    font-weight: 600;
+    text-decoration: none;
+    margin-right: 12px;
+}
+
+.table tbody td a:last-child {
+    color: var(--naranja);
+}
+
+.table tbody td a:hover {
+    text-decoration: underline;
+}
+
+/* ===== Formularios ===== */
+.form-control,
+.form-select {
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    font-family: inherit;
+    color: var(--azul-oscuro);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--naranja-claro);
+    box-shadow: 0 0 0 .2rem rgba(255, 176, 106, .25);
+}
+
+.form-label {
+    color: var(--azul);
+    font-weight: 600;
+    font-size: .9rem;
+}
+
+.form-check-input:checked {
+    background-color: var(--naranja);
+    border-color: var(--naranja);
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 .2rem rgba(255, 176, 106, .25);
+}
+
+/* ===== Botones ===== */
+.btn {
+    border-radius: 999px;
+    font-family: "Varela Round", sans-serif;
+    font-weight: 600;
+    transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+}
+
+.btn-success {
+    background-color: var(--naranja);
+    border-color: var(--naranja);
+    box-shadow: 0 4px 12px rgba(194, 65, 12, .3);
+}
+
+.btn-success:hover {
+    background-color: var(--naranja-oscuro);
+    border-color: var(--naranja-oscuro);
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background-color: var(--azul);
+    border-color: var(--azul);
+    box-shadow: 0 4px 12px rgba(11, 79, 108, .3);
+}
+
+.btn-primary:hover {
+    background-color: var(--azul-oscuro);
+    border-color: var(--azul-oscuro);
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background-color: #b3261e;
+    border-color: #b3261e;
+}
+
+.btn-danger:hover {
+    background-color: #8f1e17;
+    border-color: #8f1e17;
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    border: 1px solid var(--borde);
+    color: var(--azul);
+    background: rgba(11, 79, 108, .06);
+}
+
+.btn-secondary:hover {
+    background: rgba(11, 79, 108, .12);
+    color: var(--azul);
+}
+
+/* ===== Perfil (menú sin JavaScript) ===== */
+.perfil {
+    position: relative;
+    display: inline-block;
+}
+
+.perfil-boton {
+    padding: 0;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color .2s ease;
+}
+
+.perfil-boton:hover,
+.perfil:focus-within .perfil-boton {
+    border-color: var(--naranja-claro);
+}
+
+.perfil-boton:focus-visible {
+    outline: 3px solid var(--naranja-claro);
+    outline-offset: 3px;
+}
+
+.perfil-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 180px;
+    padding: 8px;
+    margin: 0;
+    list-style: none;
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: var(--sombra);
+    z-index: 10;
+}
+
+.perfil:focus-within .perfil-menu {
+    display: block;
+}
+
+.perfil-encabezado {
+    display: block;
+    padding: 6px 12px;
+    color: var(--azul);
+    font-weight: 600;
+    font-size: .85rem;
+}
+
+.perfil-menu li a {
+    display: block;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: var(--naranja);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.perfil-menu li a:hover {
+    background: var(--naranja);
+    color: #fff;
+}
+
+/* ===== Métodos de pago (reserva) ===== */
+.pago-metodo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: border-color .2s ease, background .2s ease;
+}
+
+.pago-metodo:hover {
+    border-color: var(--naranja-claro);
+    background: rgba(255, 176, 106, .06);
+}
+
+.pago-metodo:has(input:checked) {
+    border-color: var(--naranja);
+    background: rgba(255, 176, 106, .12);
+}
+
+.pago-icono {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: rgba(11, 79, 108, .08);
+    color: var(--azul);
+    flex-shrink: 0;
+}
+
+.pago-icono svg {
+    width: 24px;
+    height: 24px;
+}
+
+.pago-texto strong {
+    display: block;
+    color: var(--azul-oscuro);
+    font-size: .95rem;
+}
+
+.pago-texto small {
+    color: #4a6674;
+    font-size: .8rem;
+}
+
+/* ===== Factura imprimible ===== */
+.factura {
+    max-width: 720px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid var(--borde);
+    border-radius: 18px;
+    padding: 32px;
+    box-shadow: var(--sombra);
+}
+
+.factura-encabezado {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--azul);
+    margin-bottom: 20px;
+}
+
+.factura-encabezado h1 {
+    font-size: 1.6rem;
+    color: var(--azul);
+}
+
+.factura-datos {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px 24px;
+    margin-bottom: 20px;
+    font-size: .9rem;
+}
+
+.factura-datos dt {
+    color: #4a6674;
+    font-weight: 600;
+}
+
+.factura-datos dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+    color: var(--azul-oscuro);
+}
+
+.factura-total {
+    font-size: 1.4rem;
+    color: var(--naranja);
+    font-weight: 700;
+}
+
+.factura-pie {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--borde);
+    font-size: .85rem;
+    color: #4a6674;
+    text-align: center;
+}
+
+@media print {
+    body { background: #fff; }
+    .no-print { display: none !important; }
+    .factura { box-shadow: none; border: none; }
+    .factura .table-responsive { overflow: visible; }
+}
+
+@media screen and (max-width: 575.98px) {
+    .factura { padding: 20px; }
+}
+
+/* ===== Insignia y estado ===== */
+.proveedor-insignia {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    background: rgba(11, 79, 108, .12);
+    color: var(--azul-oscuro);
+}
+
+.item-estado {
+    border-left: 4px solid var(--naranja);
+    background: rgba(255, 176, 106, .16);
+    padding: 12px 16px;
+    border-radius: 10px;
+}
+
+.item-estado--edicion {
+    border-left-color: var(--azul);
+    background: rgba(11, 79, 108, .08);
+}

@@ -29,7 +29,7 @@
                     <a href="/login">Iniciar sesión</a>
                 </p>
 
-                <form action="/registro" method="POST" novalidate>
+                <form action="/registro" method="POST">
                     <input type="hidden" name="tipoUsuario" value="Cliente">
 
                     <div class="row g-3">
@@ -162,6 +162,7 @@
         const conf = document.getElementById('confirmar');
         const ayuda = document.getElementById('ayudaPassword');
         function revisar() {
+            conf.setCustomValidity(pass.value !== conf.value ? 'Las contraseñas no coinciden.' : '');
             if (conf.value && pass.value !== conf.value) {
                 ayuda.textContent = 'Las contraseñas no coinciden.';
                 ayuda.classList.add('registro-error');
