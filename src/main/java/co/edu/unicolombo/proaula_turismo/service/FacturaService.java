@@ -28,6 +28,7 @@ public class FacturaService {
         Usuario cliente = usuarios.findById(idCliente)
                 .orElseThrow(() -> new IllegalArgumentException("El cliente no existe."));
 
+        // Arma el numero CC-2026-0001 con el ano y el id de la reserva.
         String numero = String.format("CC-%d-%04d", reserva.getFechaReserva().getYear(), reserva.getIdReserva());
         return new FacturaDatos(numero, cliente, itinerario, reserva,
                 itinerarios.items(itinerario.getIdItinerario()), reserva.getValorTotal());

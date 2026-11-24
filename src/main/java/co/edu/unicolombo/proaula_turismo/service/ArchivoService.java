@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-/** Guarda los archivos subidos en una carpeta externa al JAR. */
+
 @Service
 public class ArchivoService {
 
@@ -26,6 +26,7 @@ public class ArchivoService {
         if (archivo == null || archivo.isEmpty()) {
             return null;
         }
+        // 5 MB es el limite; el formulario tambien lo limita, esto es la red de seguridad.
         if (archivo.getSize() > TAMANO_MAXIMO) {
             throw new IllegalArgumentException("El archivo supera el limite de 5 MB.");
         }
@@ -34,10 +35,12 @@ public class ArchivoService {
         String extension = original != null && original.contains(".")
                 ? original.substring(original.lastIndexOf('.') + 1).toLowerCase()
                 : "";
+        // Solo PDF e imagenes: se revisa la extension del nombre original.
         if (!PERMITIDAS.contains(extension)) {
             throw new IllegalArgumentException("Formato de archivo no permitido.");
         }
 
+        // UUID es un numero aleatorio largo: evita que dos archivos se llamen igual.
         String nombre = prefijo + "-" + UUID.randomUUID() + "." + extension;
         try {
             Path carpeta = carpeta();
@@ -52,7 +55,9 @@ public class ArchivoService {
 
     public Path resolver(String nombre) {
         Path carpeta = carpeta();
+        // normalize limpia los ../ del nombre antes de comprobar la ruta.
         Path ruta = carpeta.resolve(nombre).normalize();
+        // Si la ruta se sale de uploads se rechaza, para que no lean archivos de afuera.
         if (!ruta.startsWith(carpeta)) {
             throw new IllegalArgumentException("Ruta de archivo no valida.");
         }
@@ -60,13 +65,15 @@ public class ArchivoService {
     }
 
     public void borrar(String url) {
+        // Solo se borran archivos que esten dentro de nuestra carpeta publica.
         if (url == null || !url.startsWith("/uploads/")) {
             return;
         }
         try {
             Files.deleteIfExists(resolver(url.substring("/uploads/".length())));
+        // Si no se puede borrar se sigue: no queremos romper el registro por eso.
         } catch (IOException ignored) {
-            // Si el archivo ya no existe no afecta la operacion.
+            
         }
     }
 

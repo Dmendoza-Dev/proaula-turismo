@@ -46,6 +46,7 @@
                     <div class="card-body text-center">
                         <h2 class="h4">Eliminar oferta</h2>
                         <p class="mt-3">¿Estás seguro de eliminar <strong th:text="|'${oferta.nombreOferta}'|">la oferta</strong>?</p>
+                        <!-- El aviso cambia si la oferta ya estaba cancelada. -->
                         <p class="text-muted" th:if="${oferta.estadoOferta != 'Cancelada'}">Esta acción no se puede deshacer. Si la oferta ya está en un itinerario, solo se retirará del catálogo.</p>
                         <form th:action="'/proveedor/eliminar'" method="post">
                             <input type="hidden" name="idOferta" th:value="${oferta.idOferta}">

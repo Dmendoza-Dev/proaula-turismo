@@ -96,9 +96,11 @@
                         th:text="|${#lists.size(ofertas)} servicios|">6 servicios</span>
                 </div>
                 <div class="row g-4" th:if="${!#lists.isEmpty(ofertas)}">
+                    <!-- Repite este bloque una vez por cada oferta disponible. -->
                     <div class="col-12 col-sm-6 col-lg-4" th:each="oferta : ${ofertas}">
                         <article class="card h-100 catalogo-servicio">
                             <div class="catalogo-servicio-portada">
+                                <!-- Solo se muestra la foto si la oferta tiene imagen guardada. -->
                                 <img class="catalogo-servicio-foto" th:if="${imagenesPorOferta[oferta.idOferta] != null}"
                                      th:src="${imagenesPorOferta[oferta.idOferta]}" th:alt="${oferta.nombreOferta}">
                                 <span class="catalogo-servicio-categoria" th:text="${oferta.categoria}">Categoría</span>
@@ -132,7 +134,7 @@
                         </article>
                     </div>
                 </div>
-                <!-- Detalle de cada oferta -->
+                
                 <div class="modal fade" th:each="oferta : ${ofertas}"
                      th:id="'detalle-' + ${oferta.idOferta}" tabindex="-1"
                      th:attr="aria-labelledby='titulo-detalle-' + ${oferta.idOferta}" aria-hidden="true">
@@ -530,7 +532,7 @@
     <script src="/js/catalogo.js"></script>
     <script src="/js/carrito.js"></script>
 
-    <!-- Carrito flotante -->
+    
     <button type="button" class="carrito-flotante" id="carrito-boton" aria-label="Abrir carrito del itinerario" aria-controls="carrito-panel" aria-expanded="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
         <span class="carrito-badge" id="carrito-contador">0</span>

@@ -184,7 +184,7 @@
     line-height: 1.5;
 }
 
-/* ===== Panel de imagen ===== */
+
 .login-imagen-panel {
     background: #0B4F6C;
 }
@@ -280,7 +280,7 @@
     font-size: inherit;
 }
 
-/* ===== Registro de proveedor ===== */
+
 .login-titulo .destacado {
     color: var(--naranja-claro, #FFB06A);
 }
@@ -297,7 +297,7 @@
 
 .login-card .form-select.login-input {
     padding: 0 40px 0 14px;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23F7F1E5' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http:
     background-repeat: no-repeat;
     background-position: right 14px center;
     background-size: 16px 12px;
@@ -327,7 +327,7 @@
     }
 }
 
-/* ===== Registro de agencia ===== */
+
 .ayuda-campo {
     position: relative;
     display: inline-flex;

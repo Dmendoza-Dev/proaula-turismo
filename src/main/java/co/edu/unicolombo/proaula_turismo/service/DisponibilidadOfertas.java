@@ -9,10 +9,10 @@ import java.util.Locale;
 
 import co.edu.unicolombo.proaula_turismo.model.Oferta;
 
-/**
- * Comprueba en que dias se puede disfrutar una oferta y busca la primera fecha
- * en la que todas las ofertas del carrito estan disponibles.
- */
+
+
+
+
 public final class DisponibilidadOfertas {
 
     private static final List<String> DIAS = List.of(
@@ -26,11 +26,14 @@ public final class DisponibilidadOfertas {
             return false;
         }
         String dias = oferta.getDiasDisponibles();
+        // Si no hay dias escritos, la oferta se ofrece todos los dias.
         if (dias == null || dias.isBlank()) {
-            // Sin restriccion explicita: disponible todos los dias.
+            
             return true;
         }
+        // getValue va de 1 (lunes) a 7 (domingo); por eso se resta 1.
         String diaBuscado = normalizar(DIAS.get(fecha.getDayOfWeek().getValue() - 1));
+        // Los dias estan guardados como texto separado por comas.
         for (String valor : dias.split(",")) {
             if (normalizar(valor).equals(diaBuscado)) {
                 return true;
@@ -39,17 +42,20 @@ public final class DisponibilidadOfertas {
         return false;
     }
 
-    /**
-     * Devuelve la primera fecha, desde {@code desde}, en la que todas las
-     * ofertas estan disponibles; o null si no hay coincidencia en el rango.
-     */
+    
+
+
+
+    // LocalDate es una fecha sin hora, por ejemplo 2026-11-27.
     public static LocalDate primeraFechaCompatible(Collection<Oferta> ofertas,
             LocalDate desde, int diasBusqueda) {
         if (ofertas == null || ofertas.isEmpty() || desde == null || diasBusqueda < 1) {
             return null;
         }
+        // Miramos hasta 90 dias hacia adelante, uno por uno.
         for (int i = 0; i < diasBusqueda; i++) {
             LocalDate fecha = desde.plusDays(i);
+            // allMatch = TODAS las ofertas disponibles el mismo dia.
             if (ofertas.stream().allMatch(oferta -> disponibleEn(oferta, fecha))) {
                 return fecha;
             }
@@ -62,6 +68,7 @@ public final class DisponibilidadOfertas {
         return DIAS.get(dia.getValue() - 1);
     }
 
+    // Quita acentos para comparar Miercoles con Miércoles.
     private static String normalizar(String valor) {
         if (valor == null) {
             return "";

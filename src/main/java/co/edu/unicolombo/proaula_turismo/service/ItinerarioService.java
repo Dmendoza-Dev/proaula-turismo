@@ -41,9 +41,10 @@ public class ItinerarioService {
         this.ofertas = ofertas;
     }
 
-    /** Crea el itinerario a partir del carrito. Los precios se toman de la BD. */
+    
     @Transactional
     public Itinerario crear(List<ItemCarrito> items, Integer idCliente) {
+        // No se puede armar un itinerario sin ofertas en el carrito.
         if (items == null || items.isEmpty()) {
             throw new IllegalArgumentException("Tu itinerario esta vacio.");
         }
@@ -57,29 +58,38 @@ public class ItinerarioService {
         Set<String> destinos = new LinkedHashSet<>();
 
         for (ItemCarrito item : items) {
+            // Cada linea del carrito debe traer id y cantidad mayor a cero.
             if (item.idOferta() == null || item.cantidad() == null || item.cantidad() < 1) {
                 throw new IllegalArgumentException("Hay una cantidad no valida en el carrito.");
             }
+            // Consulta a la BD: la oferta pudo borrarse mientras el turista navegaba.
             Oferta oferta = ofertas.findById(item.idOferta())
                     .orElseThrow(() -> new IllegalArgumentException("Una oferta del carrito ya no existe."));
+            // No se pueden meter ofertas que no esten aprobadas.
             if (!OfertaService.PUBLICADA.equals(oferta.getEstadoOferta())) {
                 throw new IllegalArgumentException("La oferta " + oferta.getNombreOferta() + " no esta disponible.");
             }
+            // No dejamos reservar mas plazas de las que hay.
             if (oferta.getCuposMaximos() < item.cantidad()) {
                 throw new IllegalArgumentException("No hay cupos suficientes para " + oferta.getNombreOferta() + ".");
             }
+            // La misma oferta repetida se sumaria dos veces al precio.
             if (seleccionadas.containsKey(item.idOferta())) {
                 throw new IllegalArgumentException("Hay ofertas repetidas en el carrito.");
             }
             seleccionadas.put(item.idOferta(), oferta);
+            // Precio por unidad por cantidad: asi se arma el total.
             total = total.add(oferta.getPrecio().multiply(BigDecimal.valueOf(item.cantidad())));
+            // El numero de personas es la mayor cantidad pedida en una sola oferta.
             personas = Math.max(personas, item.cantidad());
             destinos.add(oferta.getIsla());
         }
 
-        // Todas las ofertas deben poder disfrutarse el mismo dia.
+        
+        // Busca el primer dia en que TODAS las ofertas estan disponibles.
         LocalDate fechaVisita = DisponibilidadOfertas.primeraFechaCompatible(
                 seleccionadas.values(), LocalDate.now().plusDays(1), DIAS_BUSQUEDA);
+        // Si no hay dia comun (por ejemplo Lunes y Martes), se rechaza el carrito.
         if (fechaVisita == null) {
             throw new IllegalArgumentException(
                     "Las ofertas elegidas no coinciden en ningun dia disponible en los proximos "
@@ -88,10 +98,12 @@ public class ItinerarioService {
 
         Itinerario itinerario = new Itinerario();
         itinerario.setNombreItinerario("Itinerario " + LocalDate.now());
+        // Varias islas se juntan con y; se recorta para que quepa en la BD.
         itinerario.setDestino(recortar(String.join(" y ", destinos), 150));
         itinerario.setFechaVisita(fechaVisita);
         itinerario.setNumPersonas(personas);
         itinerario.setCostoTotal(total);
+        // El itinerario nace sin pagar; cambia a Reservado cuando se pague.
         itinerario.setEstadoItinerario(PENDIENTE_PAGO);
         itinerario.setIdCliente(idCliente);
         itinerarios.save(itinerario);
@@ -112,6 +124,7 @@ public class ItinerarioService {
     public Itinerario obtener(Integer idItinerario, Integer idCliente) {
         Itinerario itinerario = itinerarios.findById(idItinerario)
                 .orElseThrow(() -> new IllegalArgumentException("El itinerario no existe."));
+        // Un turista no puede abrir el itinerario de otro.
         if (!itinerario.getIdCliente().equals(idCliente)) {
             throw new IllegalArgumentException("Ese itinerario no te pertenece.");
         }
@@ -123,6 +136,7 @@ public class ItinerarioService {
         if (lista.isEmpty()) {
             return List.of();
         }
+        // Juntamos los ids unicos para consultar todas las ofertas de una vez.
         List<Integer> ids = lista.stream().map(DetalleItinerario::getIdOferta).distinct().toList();
         Map<Integer, Oferta> porId = ofertas.findAllById(ids).stream()
                 .collect(Collectors.toMap(Oferta::getIdOferta, Function.identity()));
@@ -140,12 +154,13 @@ public class ItinerarioService {
         return resultado;
     }
 
-    /**
-     * Descuenta los cupos cuando el pago se confirma. Si dos personas compran
-     * la misma oferta quedan dos cupos menos. La capacidad es por oferta, no
-     * por fecha: es una simplificacion del prototipo.
-     */
+    
+
+
+
+
     @Transactional
+    // Si un cupo falla a mitad, se deshacen los descuentos ya hechos.
     public void descontarCupos(Integer idItinerario) {
         Itinerario itinerario = itinerarios.findById(idItinerario)
                 .orElseThrow(() -> new IllegalArgumentException("El itinerario no existe."));
@@ -155,13 +170,16 @@ public class ItinerarioService {
             if (!OfertaService.PUBLICADA.equals(oferta.getEstadoOferta())) {
                 throw new IllegalArgumentException("La oferta " + oferta.getNombreOferta() + " ya no esta disponible.");
             }
+            // Se vuelve a revisar el dia porque el itinerario ya tiene fecha fija.
             if (!DisponibilidadOfertas.disponibleEn(oferta, itinerario.getFechaVisita())) {
                 throw new IllegalArgumentException("La oferta " + oferta.getNombreOferta()
                         + " ya no se ofrece en la fecha del itinerario.");
             }
+            // Ultima revision de cupos justo antes de pagar.
             if (oferta.getCuposMaximos() < detalle.getCantidad()) {
                 throw new IllegalArgumentException("Ya no hay cupos suficientes para " + oferta.getNombreOferta() + ".");
             }
+            // Restamos las plazas vendidas de la oferta en la BD.
             oferta.setCuposMaximos(oferta.getCuposMaximos() - detalle.getCantidad());
             ofertas.save(oferta);
         }

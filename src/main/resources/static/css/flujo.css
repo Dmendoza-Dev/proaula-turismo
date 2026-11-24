@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Momo+Trust+Display&family=Varela+Round&display=swap");
+@import url("https:
 
 :root {
     --bs-primary: #0B4F6C;
@@ -38,7 +38,7 @@ h1, h2, h3, h4, h5, h6 {
     color: #083A52;
 }
 
-/* ===== Cabecera (ancho completo) ===== */
+
 .proveedor-cabecera {
     padding: 18px 24px;
     border-radius: 0;
@@ -58,7 +58,7 @@ h1, h2, h3, h4, h5, h6 {
     border-color: rgba(255, 255, 255, 0.5);
 }
 
-/* ===== Navegación ===== */
+
 .nav-pills .nav-link {
     color: var(--azul);
     border-radius: 999px;
@@ -76,7 +76,7 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--naranja);
 }
 
-/* ===== Tarjetas ===== */
+
 .card {
     border: 1px solid var(--borde);
     border-radius: 18px;
@@ -95,7 +95,7 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--azul-oscuro);
 }
 
-/* ===== Tabla ===== */
+
 .table {
     border-radius: 16px;
     overflow: hidden;
@@ -132,7 +132,7 @@ h1, h2, h3, h4, h5, h6 {
     text-decoration: underline;
 }
 
-/* ===== Formularios ===== */
+
 .form-control,
 .form-select {
     border: 1px solid var(--borde);
@@ -162,7 +162,7 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: 0 0 0 .2rem rgba(255, 176, 106, .25);
 }
 
-/* ===== Botones ===== */
+
 .btn {
     border-radius: 999px;
     font-family: "Varela Round", sans-serif;
@@ -216,7 +216,7 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--azul);
 }
 
-/* ===== Perfil (menú sin JavaScript) ===== */
+
 .perfil {
     position: relative;
     display: inline-block;
@@ -283,7 +283,7 @@ h1, h2, h3, h4, h5, h6 {
     color: #fff;
 }
 
-/* ===== Métodos de pago (reserva) ===== */
+
 .pago-metodo {
     display: flex;
     align-items: center;
@@ -332,7 +332,7 @@ h1, h2, h3, h4, h5, h6 {
     font-size: .8rem;
 }
 
-/* ===== Factura imprimible ===== */
+
 .factura {
     max-width: 720px;
     margin: 0 auto;
@@ -404,7 +404,7 @@ h1, h2, h3, h4, h5, h6 {
     .factura { padding: 20px; }
 }
 
-/* ===== Insignia y estado ===== */
+
 .proveedor-insignia {
     display: inline-block;
     padding: 5px 12px;

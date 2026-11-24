@@ -8,7 +8,8 @@ import co.edu.unicolombo.proaula_turismo.model.Itinerario;
 import co.edu.unicolombo.proaula_turismo.model.Reserva;
 import co.edu.unicolombo.proaula_turismo.model.Usuario;
 
-/** Todo lo que necesita la plantilla del comprobante. */
+
+// record = paquete de datos listo para leer; aqui junta todo lo que ve la factura.
 public record FacturaDatos(
         String numeroReserva,
         Usuario cliente,

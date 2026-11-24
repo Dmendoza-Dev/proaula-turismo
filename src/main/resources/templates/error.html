@@ -26,6 +26,7 @@
                 <p class="display-4 fw-bold mb-1" th:text="${status != null ? status : 'Error'}">Error</p>
                 <h1 class="login-titulo h4">No pudimos completar la solicitud</h1>
 
+                <!-- Segun el codigo de error se muestra un texto distinto. -->
                 <p class="text-muted" th:if="${status == 404}">
                     La pagina que buscas no existe o fue movida. Revisa la direccion e intentalo de nuevo.
                 </p>

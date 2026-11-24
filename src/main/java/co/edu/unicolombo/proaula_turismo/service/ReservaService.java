@@ -25,31 +25,38 @@ public class ReservaService {
         this.itinerarioService = itinerarioService;
     }
 
-    /** Pago simulado: no se contacta a ninguna pasarela real. */
+    
+    // Si falla el pago, ni la reserva ni el descuento de cupos quedan a medias.
     @Transactional
     public Reserva pagar(Integer idItinerario, String metodoPago, Integer idCliente) {
         Itinerario itinerario = itinerarioService.obtener(idItinerario, idCliente);
+        // Evita pagar dos veces el mismo itinerario.
         if (!ItinerarioService.PENDIENTE_PAGO.equals(itinerario.getEstadoItinerario())) {
             throw new IllegalArgumentException("Este itinerario ya fue pagado o cancelado.");
         }
+        // Segunda barrera: si ya existe reserva, no se crea otra.
         if (reservas.findByIdItinerario(idItinerario).isPresent()) {
             throw new IllegalArgumentException("Este itinerario ya tiene una reserva.");
         }
+        //  pse se convierte en PSE; cualquier otra cosa se rechaza.
         String metodo = MetodosPago.normalizar(metodoPago);
 
-        // Se valida y descuenta la capacidad antes de confirmar el pago.
+        
+        // Aqui se restan las plazas de cada oferta.
         itinerarioService.descontarCupos(idItinerario);
 
         Reserva reserva = new Reserva();
         reserva.setFechaReserva(LocalDateTime.now());
         reserva.setValorTotal(itinerario.getCostoTotal());
         reserva.setMetodoPago(metodo);
+        // El pago es simulado: siempre se aprueba.
         reserva.setEstadoPago("Aprobado");
         reserva.setEstadoReserva("Pagada");
         reserva.setValorReembolso(BigDecimal.ZERO);
         reserva.setIdItinerario(idItinerario);
         reservas.save(reserva);
 
+        // El itinerario pasa a Reservado solo despues de guardar la reserva.
         itinerario.setEstadoItinerario(ItinerarioService.RESERVADO);
         itinerarios.save(itinerario);
         return reserva;

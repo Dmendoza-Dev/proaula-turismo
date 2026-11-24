@@ -5,10 +5,11 @@ import org.springframework.stereotype.Service;
 import co.edu.unicolombo.proaula_turismo.model.Usuario;
 import jakarta.servlet.http.HttpSession;
 
-/** Maneja el usuario autenticado y los datos temporales de la reserva. */
+
 @Service
 public class SesionService {
 
+    // Claves con las que se guardan cosas dentro de la sesion del navegador.
     public static final String USUARIO = "usuarioSesion";
     public static final String ITINERARIO = "idItinerarioActual";
     public static final String RESERVA = "idReservaActual";
@@ -27,6 +28,7 @@ public class SesionService {
         return usuario == null ? null : usuario.getIdUsuario();
     }
 
+    // invalidate() destruye la sesion y borra todo lo guardado en ella.
     public void cerrar(HttpSession sesion) {
         sesion.invalidate();
     }

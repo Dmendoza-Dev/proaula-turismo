@@ -10,22 +10,25 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-/**
- * Cabeceras minimas para el prototipo. No se usa Spring Security.
- * No se agregan restricciones que puedan romper la navegacion normal.
- */
+
+
+
+
 @Component
 public class CabecerasSeguridadFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest peticion, HttpServletResponse respuesta,
             FilterChain cadena) throws ServletException, IOException {
+        // Evita que el navegador adivine el tipo de archivo y ejecute algo raro.
         respuesta.setHeader("X-Content-Type-Options", "nosniff");
+        // Evita que otra pagina metaa este sitio dentro de un marco.
         respuesta.setHeader("X-Frame-Options", "SAMEORIGIN");
         cadena.doFilter(peticion, respuesta);
     }
 
     @Override
+    // true seria saltarse el filtro en paginas de error; aqui se aplica tambien.
     protected boolean shouldNotFilterErrorDispatch() {
         return false;
     }

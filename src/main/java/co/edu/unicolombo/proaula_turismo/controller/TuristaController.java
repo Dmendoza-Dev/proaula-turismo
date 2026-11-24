@@ -34,7 +34,7 @@ public class TuristaController {
         this.sesion = sesion;
     }
 
-    /** Recibe el carrito del catalogo y crea el itinerario en la BD. */
+    
     @PostMapping("/turista/reserva")
     public String crearItinerario(
             @RequestParam(name = "idOferta", required = false) List<Integer> ids,
@@ -42,7 +42,9 @@ public class TuristaController {
             HttpSession http, RedirectAttributes mensajes) {
         try {
             List<ItemCarrito> items = new ArrayList<>();
+            // El carrito viaja como dos listas paralelas: ids y cantidades.
             if (ids != null && cantidades != null) {
+                // Si no coinciden las listas, alguien manipulo el formulario.
                 if (ids.size() != cantidades.size()) {
                     throw new IllegalArgumentException("El carrito no es valido.");
                 }
@@ -50,7 +52,9 @@ public class TuristaController {
                     items.add(new ItemCarrito(ids.get(i), cantidades.get(i)));
                 }
             }
+            // Se guarda el itinerario y se calcula la fecha comun automaticamente.
             Itinerario itinerario = itinerarios.crear(items, sesion.idUsuario(http));
+            // Guardamos el id en la sesion para recordar que itinerario se esta pagando.
             http.setAttribute(SesionService.ITINERARIO, itinerario.getIdItinerario());
             return "redirect:/turista/reserva";
         } catch (IllegalArgumentException e) {
@@ -61,12 +65,14 @@ public class TuristaController {
 
     @GetMapping("/turista/reserva")
     public String reserva(HttpSession http, Model modelo, RedirectAttributes mensajes) {
+        // Si no hay id en sesion, el turista aun no armo su itinerario.
         Integer id = (Integer) http.getAttribute(SesionService.ITINERARIO);
         if (id == null) {
             mensajes.addFlashAttribute("error", "Primero arma tu itinerario en el catalogo.");
             return "redirect:/catalogo";
         }
         try {
+            // obtener comprueba que el itinerario sea de este turista.
             modelo.addAttribute("itinerario", itinerarios.obtener(id, sesion.idUsuario(http)));
             modelo.addAttribute("items", itinerarios.items(id));
             return "turista/reserva";
@@ -85,9 +91,11 @@ public class TuristaController {
             return "redirect:/catalogo";
         }
         try {
+            // Aqui se descuentan cupos y se crea la factura.
             var reserva = reservas.pagar(id, metodoPago, sesion.idUsuario(http));
+            // Se guarda el id de la reserva para poder reabrir la factura.
             http.setAttribute(SesionService.RESERVA, reserva.getIdReserva());
-            // Solo esta visita a la factura debe limpiar el carrito del navegador.
+            
             mensajes.addFlashAttribute("pagoExitoso", true);
             return "redirect:/turista/factura";
         } catch (IllegalArgumentException e) {
@@ -98,12 +106,14 @@ public class TuristaController {
 
     @GetMapping("/turista/factura")
     public String factura(HttpSession http, Model modelo, RedirectAttributes mensajes) {
+        // Sin reserva en sesion no hay factura que mostrar.
         Integer id = (Integer) http.getAttribute(SesionService.RESERVA);
         if (id == null) {
             mensajes.addFlashAttribute("error", "Aun no tienes una reserva confirmada.");
             return "redirect:/catalogo";
         }
         try {
+            // construir junta itinerario, reserva y datos del cliente en un solo paquete.
             modelo.addAttribute("factura", factura.construir(id, sesion.idUsuario(http)));
             return "turista/factura";
         } catch (IllegalArgumentException e) {

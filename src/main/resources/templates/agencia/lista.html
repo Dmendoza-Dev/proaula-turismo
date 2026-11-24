@@ -66,6 +66,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <!-- Una fila por oferta de la agencia. -->
                     <tr th:each="oferta : ${ofertas}">
                         <td th:text="${oferta.idOferta}">1</td>
                         <td th:text="${oferta.nombreOferta}">Oferta</td>

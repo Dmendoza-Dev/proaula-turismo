@@ -54,6 +54,7 @@
                     <label for="categoria" class="form-label">Categoría del servicio *</label>
                     <select id="categoria" name="categoria" class="form-select" required>
                         <option value="">Selecciona una categoría</option>
+                        <!-- th:selected deja marcada la opcion que ya tenia la oferta guardada. -->
                         <option value="Pasadia" th:selected="${oferta.categoria == 'Pasadia'}">Pasadía</option>
                         <option value="Paquete" th:selected="${oferta.categoria == 'Paquete'}">Paquete turístico</option>
                         <option value="Transporte" th:selected="${oferta.categoria == 'Transporte'}">Transporte marítimo</option>

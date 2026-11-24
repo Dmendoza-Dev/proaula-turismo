@@ -5,7 +5,8 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
-/** Datos del formulario de publicacion y edicion de ofertas. */
+
+// Los campos del formulario de oferta ya convertidos a numeros y listas.
 public record OfertaForm(
         String categoria,
         String nombre,

@@ -42,18 +42,23 @@ public class SupervisorController {
     @GetMapping("/supervisor/lista")
     public String lista(@RequestParam(name = "filtro", required = false, defaultValue = "pendientes") String filtro,
             Model modelo) {
+        // El filtro de la URL decide si se muestran solo pendientes o todas.
         List<Oferta> lista = "todas".equalsIgnoreCase(filtro) ? ofertas.todas() : ofertas.pendientes();
         modelo.addAttribute("ofertas", lista);
         modelo.addAttribute("filtro", filtro);
+        // Consulta a la BD: necesitamos el rol de cada publicador para la tabla.
         modelo.addAttribute("tipos", usuarios.findAll().stream()
+                // toMap arma un diccionario id -> rol; el (a,b)->a evita choques repetidos.
                 .collect(Collectors.toMap(u -> u.getIdUsuario(), u -> u.getTipoUsuario(),
                         (a, b) -> a, java.util.LinkedHashMap::new)));
         return "supervisor/lista";
     }
 
+    // {id} se toma de la URL, por ejemplo /supervisor/aprobar/3.
     @PostMapping("/supervisor/aprobar/{id}")
     public String aprobar(@PathVariable Integer id, RedirectAttributes mensajes) {
         try {
+            // Solo cambia a Publicada si seguia Pendiente.
             ofertas.aprobar(id);
             mensajes.addFlashAttribute("mensaje", "Oferta aprobada y publicada.");
         } catch (IllegalArgumentException e) {

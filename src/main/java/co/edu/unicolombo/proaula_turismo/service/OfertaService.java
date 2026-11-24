@@ -43,6 +43,7 @@ public class OfertaService {
         OfertaForm validos = ReglasOferta.normalizarYValidar(datos);
         Oferta oferta = new Oferta();
         aplicar(validos, oferta);
+        // Toda oferta nueva queda esperando a que el supervisor la apruebe.
         oferta.setEstadoOferta(PENDIENTE);
         oferta.setIdProveedor(idUsuario);
         ofertas.save(oferta);
@@ -54,15 +55,17 @@ public class OfertaService {
     public Oferta actualizar(Integer idOferta, OfertaForm datos, Integer idUsuario) {
         Oferta oferta = ofertas.findById(idOferta)
                 .orElseThrow(() -> new IllegalArgumentException("La oferta no existe."));
+        // Un publicador no puede tocar ofertas de otro.
         if (!oferta.getIdProveedor().equals(idUsuario)) {
             throw new IllegalArgumentException("No puedes editar una oferta de otro publicador.");
         }
         OfertaForm validos = ReglasOferta.normalizarYValidar(datos);
         aplicar(validos, oferta);
-        // Toda modificacion vuelve a auditoria.
+        
         oferta.setEstadoOferta(PENDIENTE);
         ofertas.save(oferta);
         if (tieneImagenes(validos.imagenes())) {
+            // Si no se uso, si se elimina y tambien sus fotos.
             borrarImagenes(idOferta);
             guardarImagenes(validos.imagenes(), idOferta);
         }
@@ -76,8 +79,10 @@ public class OfertaService {
         if (!oferta.getIdProveedor().equals(idUsuario)) {
             throw new IllegalArgumentException("No puedes eliminar una oferta de otro publicador.");
         }
+        // Consulta a la BD: la oferta ya esta en algun itinerario?
         if (detalles.existsByIdOferta(idOferta)) {
-            // Ya forma parte de un itinerario: se retira del catalogo sin borrar el historial.
+            
+            // Si ya se uso, no se borra: se marca Cancelada para no romper facturas viejas.
             oferta.setEstadoOferta(CANCELADA);
             ofertas.save(oferta);
             return;
@@ -88,6 +93,7 @@ public class OfertaService {
 
     @Transactional
     public void aprobar(Integer idOferta) {
+        // Aprobar solo funciona si la oferta esta Pendiente.
         cambiarEstado(idOferta, PENDIENTE, PUBLICADA);
     }
 
@@ -99,6 +105,7 @@ public class OfertaService {
     private void cambiarEstado(Integer idOferta, String esperado, String nuevo) {
         Oferta oferta = ofertas.findById(idOferta)
                 .orElseThrow(() -> new IllegalArgumentException("La oferta no existe."));
+        // Evita aprobar dos veces o aprobar una oferta ya cancelada.
         if (!esperado.equals(oferta.getEstadoOferta())) {
             throw new IllegalArgumentException("Esta oferta ya no esta pendiente de auditoria.");
         }
@@ -107,6 +114,7 @@ public class OfertaService {
     }
 
     public List<Oferta> publicadas() {
+        // Consulta a la BD: solo publicadas, primero las mas nuevas.
         return ofertas.findByEstadoOfertaOrderByIdOfertaDesc(PUBLICADA);
     }
 
@@ -131,14 +139,16 @@ public class OfertaService {
         return imagenes.findByIdOferta(idOferta);
     }
 
-    /** Primera imagen de cada oferta en una sola consulta (evita N+1 en el catalogo). */
+    
     public Map<Integer, String> imagenesPrincipales(List<Oferta> lista) {
         Map<Integer, String> resultado = new LinkedHashMap<>();
         if (lista == null || lista.isEmpty()) {
             return resultado;
         }
         List<Integer> ids = lista.stream().map(Oferta::getIdOferta).toList();
+        // Consulta a la BD: trae las fotos de todas las ofertas de una sola vez.
         for (OfertaImagen imagen : imagenes.findByIdOfertaIn(ids)) {
+            // Con una sola foto basta para la tarjeta del catalogo.
             resultado.putIfAbsent(imagen.getIdOferta(), imagen.getRuta());
         }
         return resultado;
@@ -151,6 +161,7 @@ public class OfertaService {
         oferta.setIsla(datos.isla());
         oferta.setPrecio(datos.tarifa());
         oferta.setCuposMaximos(datos.cupos());
+        // Los dias se guardan como texto Lunes, Viernes separado por comas.
         oferta.setDiasDisponibles(datos.dias() == null || datos.dias().isEmpty()
                 ? null : String.join(", ", datos.dias()));
         oferta.setHorarioInicio(hora(datos.horarioInicio()));
@@ -185,8 +196,9 @@ public class OfertaService {
                 imagen.setRuta(ruta);
                 imagenes.save(imagen);
             }
+        // Si falla una imagen, borramos las que ya se subieron para no dejar restos.
         } catch (RuntimeException e) {
-            // Si la transaccion falla, no se dejan archivos huerfanos en uploads/.
+            
             rutasGuardadas.forEach(archivos::borrar);
             throw e;
         }

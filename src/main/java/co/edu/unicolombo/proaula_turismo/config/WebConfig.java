@@ -14,10 +14,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-/** Protege las rutas de cada rol y evita que un rol entre en las paginas de otro. */
+
 @Component
 public class WebConfig implements WebMvcConfigurer, HandlerInterceptor {
 
+    // Estas rutas se pueden abrir sin haber iniciado sesion.
     private static final Set<String> PUBLICAS = Set.of(
             "/", "/index", "/login", "/registro", "/registro-turista", "/registro-agencia",
             "/catalogo", "/logout");
@@ -30,6 +31,7 @@ public class WebConfig implements WebMvcConfigurer, HandlerInterceptor {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        // El filtro se aplica casi a toda la web, menos a imagenes y archivos.
         registry.addInterceptor(this)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/css/**", "/js/**", "/img/**", "/uploads/**", "/webjars/**");
@@ -38,27 +40,33 @@ public class WebConfig implements WebMvcConfigurer, HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest peticion, HttpServletResponse respuesta, Object manejador)
             throws IOException {
-        // Spring puede agregar ;jsessionid a las URLs cuando el navegador aun no
-        // tiene la cookie. Se ignora ese parametro para que la ruta siga siendo publica.
+        
+        
+        // Quita el ;jsessionid y la barra final para comparar rutas iguales.
         String ruta = normalizar(peticion.getRequestURI());
+        // Si la pagina es publica, se deja pasar sin revisar el rol.
         if (esPublica(ruta)) {
             return true;
         }
 
+        // Segun la carpeta de la ruta, decide que rol se necesita.
         String requerido = rolRequerido(ruta);
         if (requerido == null) {
-            // Ruta desconocida: se deja pasar para que Spring responda 404.
+            
             return true;
         }
 
+        // false = no crear sesion nueva solo por mirar; si no hay, usuario queda null.
         HttpSession sesionHttp = peticion.getSession(false);
         Usuario usuario = sesionHttp == null ? null : sesion.obtener(sesionHttp);
+        // Sin sesion valida se manda al login.
         if (usuario == null) {
             respuesta.sendRedirect("/login");
             return false;
         }
 
         String tipo = usuario.getTipoUsuario();
+        // Si el rol no coincide, se envia a su propia pagina inicial.
         if (!requerido.equals(tipo)) {
             respuesta.sendRedirect(paginaInicial(tipo));
             return false;
@@ -70,10 +78,12 @@ public class WebConfig implements WebMvcConfigurer, HandlerInterceptor {
         if (ruta == null || ruta.isEmpty()) {
             return "/";
         }
+        // El ;jsessionid va pegado a la URL y no debe contar como parte de la ruta.
         int parametro = ruta.indexOf(';');
         if (parametro >= 0) {
             ruta = ruta.substring(0, parametro);
         }
+        // /catalogo/ y /catalogo se tratan como la misma ruta.
         while (ruta.length() > 1 && ruta.endsWith("/")) {
             ruta = ruta.substring(0, ruta.length() - 1);
         }
@@ -84,7 +94,8 @@ public class WebConfig implements WebMvcConfigurer, HandlerInterceptor {
         return PUBLICAS.contains(ruta) || ruta.startsWith("/error");
     }
 
-    /** Solo los espacios de cada rol exigen sesion; el resto lo resuelve Spring. */
+    
+    // Cada carpeta delante de la ruta exige un tipo de usuario distinto.
     private String rolRequerido(String ruta) {
         if (ruta.startsWith("/proveedor/")) {
             return "Proveedor";
@@ -101,6 +112,7 @@ public class WebConfig implements WebMvcConfigurer, HandlerInterceptor {
         return null;
     }
 
+    // A cada rol se le abre su panel; el turista cae en el catalogo.
     private String paginaInicial(String tipo) {
         return switch (tipo) {
             case "Proveedor" -> "/proveedor/panel";

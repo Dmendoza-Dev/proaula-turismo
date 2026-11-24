@@ -2,7 +2,8 @@ package co.edu.unicolombo.proaula_turismo.service.dto;
 
 import java.math.BigDecimal;
 
-/** Detalle del itinerario con el nombre de la oferta ya resuelto. */
+
+// Igual que el carrito, pero ya con nombres y precios guardados en la BD.
 public record ItemItinerario(
         String nombreOferta,
         String categoria,

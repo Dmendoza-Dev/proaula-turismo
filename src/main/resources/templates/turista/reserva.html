@@ -54,6 +54,7 @@
                             <dt class="col-4 col-sm-3">Destino</dt>
                             <dd class="col-8 col-sm-9" th:text="${itinerario.destino}">Destino</dd>
                             <dt class="col-4 col-sm-3">Fecha de visita</dt>
+                            <!-- #temporals convierte la fecha en texto dd/MM/yyyy. -->
                             <dd class="col-8 col-sm-9" th:text="${#temporals.format(itinerario.fechaVisita, 'dd/MM/yyyy')}">Fecha</dd>
                             <dt class="col-4 col-sm-3">Personas</dt>
                             <dd class="col-8 col-sm-9" th:text="${itinerario.numPersonas}">0</dd>
@@ -72,6 +73,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <!-- Una fila por cada oferta del itinerario. -->
                                     <tr th:each="item : ${items}">
                                         <td th:text="${item.nombreOferta}">Oferta</td>
                                         <td th:text="${item.categoria}">Categoría</td>

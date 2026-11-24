@@ -52,6 +52,7 @@
                     <label for="categoria" class="form-label">Categoría del servicio *</label>
                     <select id="categoria" name="categoria" class="form-select" required>
                         <option value="">Selecciona una categoría</option>
+                        <!-- th:selected deja marcada la opcion al volver a cargar el formulario. -->
                         <option value="Alquiler de carpas y cabañas" th:selected="${oferta.categoria == 'Alquiler de carpas y cabañas'}">Alquiler de carpas y cabañas</option>
                         <option value="Almuerzo" th:selected="${oferta.categoria == 'Almuerzo'}">Almuerzo</option>
                         <option value="Hospedaje" th:selected="${oferta.categoria == 'Hospedaje'}">Hospedaje</option>

@@ -7,7 +7,7 @@
         try {
             var datos = JSON.parse(localStorage.getItem(CLAVE) || '[]');
             if (!Array.isArray(datos)) return [];
-            // Descarta entradas antiguas sin ID y datos dañados del navegador.
+            
             return datos.filter(function (it) {
                 return it && Number.isSafeInteger(Number(it.id)) && Number(it.id) > 0 &&
                     typeof it.nombre === 'string' &&
@@ -110,7 +110,7 @@
             totalEl.textContent = dinero(totalCarrito(lista));
         }
 
-        // wire quitar buttons
+        
         contenedor.querySelectorAll('.carrito-item-quitar').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 var idx = Number(this.getAttribute('data-idx'));
@@ -183,7 +183,7 @@
         renderPopup();
     }
 
-    // Expose for reserva/factura pages
+    
     window.CayoCarrito = {
         leer: leer,
         guardar: guardar,
@@ -196,7 +196,7 @@
         actualizarBadge();
         renderPopup();
 
-        // Agregar buttons
+        
         document.querySelectorAll('.agregar-carrito').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 agregarItem({
@@ -209,7 +209,7 @@
             });
         });
 
-        // Toggle panel
+        
         var boton = document.getElementById('carrito-boton');
         if (boton) boton.addEventListener('click', abrirPanel);
 

@@ -47,7 +47,8 @@
             </div>
             <div class="d-flex gap-2">
                 <a href="/supervisor/lista?filtro=pendientes" class="btn btn-warning"
-                   th:classappend="${filtro != 'todas'} ? ' active'">Pendientes</a>
+                   <!-- classappend pone active para resaltar el filtro elegido. -->
+                    th:classappend="${filtro != 'todas'} ? ' active'">Pendientes</a>
                 <a href="/supervisor/lista?filtro=todas" class="btn btn-secondary"
                    th:classappend="${filtro == 'todas'} ? ' active'">Todas</a>
             </div>
@@ -72,6 +73,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <!-- Una fila por oferta pendiente, o por todas si el filtro lo dice. -->
                     <tr th:each="oferta : ${ofertas}">
                         <td th:text="${oferta.idOferta}">1</td>
                         <td th:text="${oferta.nombreOferta}">Oferta</td>

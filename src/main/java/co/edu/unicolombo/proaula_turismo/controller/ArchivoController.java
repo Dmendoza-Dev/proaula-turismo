@@ -25,13 +25,16 @@ public class ArchivoController {
     @GetMapping("/uploads/{nombre}")
     public ResponseEntity<byte[]> descargar(@PathVariable String nombre) {
         try {
+            // resolver revisa que el nombre no contenga ../ para salir de la carpeta.
             Path ruta = archivos.resolver(nombre);
             if (!Files.exists(ruta) || !Files.isRegularFile(ruta)) {
                 return ResponseEntity.notFound().build();
             }
+            // Adivina el tipo (PDF, PNG...) por la extension para que el navegador lo abra bien.
             MediaType tipo = MediaTypeFactory.getMediaType(nombre)
                     .orElse(MediaType.APPLICATION_OCTET_STREAM);
             return ResponseEntity.ok().contentType(tipo).body(Files.readAllBytes(ruta));
+        // Si el archivo no se puede leer, se responde 404 en vez de un error feo.
         } catch (IOException | IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         }

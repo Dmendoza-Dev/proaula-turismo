@@ -32,18 +32,23 @@ public class UsuarioService {
         this.agencias = agencias;
     }
 
+    // Transaccion = si algo falla en medio, se deshace todo lo guardado.
     @Transactional
     public void registrar(RegistroUsuario datos) {
+        // Primero convertimos el texto del formulario en Cliente, Proveedor o Agencia.
         String tipo = ReglasRegistro.normalizarTipo(datos.tipoUsuario());
         RegistroUsuario limpio = ReglasRegistro.normalizar(datos, tipo);
         ReglasRegistro.validar(limpio, tipo);
 
+        // Consulta a la BD: ya hay alguien con este correo?
         if (usuarios.existsByCorreo(limpio.correo())) {
             throw new IllegalArgumentException("Ya existe una cuenta con ese correo.");
         }
+        // Consulta a la BD: ya hay alguien con este documento?
         if (usuarios.existsByDocumento(limpio.documento())) {
             throw new IllegalArgumentException("Ya existe una cuenta con ese documento.");
         }
+        // El NIT de agencia es unico; si se repite se avisa antes de grabar.
         if ("Agencia".equals(tipo) && agencias.existsByNit(limpio.nit())) {
             throw new IllegalArgumentException("Ya existe una agencia con ese NIT.");
         }
@@ -53,11 +58,13 @@ public class UsuarioService {
         usuario.setDocumento(limpio.documento());
         usuario.setCorreo(limpio.correo());
         usuario.setTelefono(limpio.telefono());
-        // Prototipo academico: se guarda tal cual para poder leerla en la BD.
+        
         usuario.setContrasena(limpio.contrasena());
         usuario.setTipoUsuario(tipo);
+        // saveAndFlush guarda y confirma ya para obtener el id generado.
         usuarios.saveAndFlush(usuario);
 
+        // En la misma transaccion se crea la fila segun el tipo de cuenta.
         switch (tipo) {
             case "Cliente" -> {
                 Turista turista = new Turista();
@@ -89,11 +96,14 @@ public class UsuarioService {
         }
     }
 
+    // Optional = puede venir un usuario o venir vacio, sin devolver null.
     public Optional<Usuario> autenticar(String correo, String contrasena) {
         if (correo == null || contrasena == null) {
             return Optional.empty();
         }
+        // Busca en la BD por correo en minusculas.
         Optional<Usuario> encontrado = usuarios.findByCorreo(correo.trim().toLowerCase(Locale.ROOT));
+        // Comparamos la clave tal cual; si no coincide, no hay login.
         if (encontrado.isEmpty() || !encontrado.get().getContrasena().equals(contrasena)) {
             return Optional.empty();
         }

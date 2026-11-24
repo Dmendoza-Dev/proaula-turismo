@@ -1,14 +1,14 @@
--- ------------------------------------------------------------
--- Cayo Cartagena - esquema completo (9 tablas)
--- Ejecutar una sola vez sobre una base vacia.
--- ------------------------------------------------------------
+
+
+
+
 create database if not exists CayoCartagena
     character set utf8mb4 collate utf8mb4_unicode_ci;
 use CayoCartagena;
 
--- ------------------------------------------------------------
--- Usuarios: cliente, proveedor, agencia y supervisor
--- ------------------------------------------------------------
+
+
+
 create table Usuario (
     Id_usuario      int auto_increment primary key,
     Nombres         varchar(100) not null,
@@ -20,9 +20,9 @@ create table Usuario (
     Tipo_usuario    enum('Cliente', 'Proveedor', 'Agencia', 'Supervisor') not null
 );
 
--- ------------------------------------------------------------
--- Datos del negocio del proveedor
--- ------------------------------------------------------------
+
+
+
 create table Proveedor (
     Id_proveedor    int auto_increment primary key,
     Nombre_negocio  varchar(100) not null,
@@ -34,9 +34,9 @@ create table Proveedor (
     foreign key (Id_usuario) references Usuario(Id_usuario)
 );
 
--- ------------------------------------------------------------
--- Datos del perfil del turista (cliente)
--- ------------------------------------------------------------
+
+
+
 create table Turista (
     Id_turista      int auto_increment primary key,
     Tipo_turista    enum('Turista', 'Residente') not null default 'Turista',
@@ -46,9 +46,9 @@ create table Turista (
     foreign key (Id_usuario) references Usuario(Id_usuario)
 );
 
--- ------------------------------------------------------------
--- Datos de la agencia de turismo
--- ------------------------------------------------------------
+
+
+
 create table Agencia (
     Id_agencia          int auto_increment primary key,
     Razon_social        varchar(100) not null,
@@ -61,9 +61,9 @@ create table Agencia (
     foreign key (Id_usuario) references Usuario(Id_usuario)
 );
 
--- ------------------------------------------------------------
--- Ofertas publicadas por proveedores o agencias
--- ------------------------------------------------------------
+
+
+
 create table Oferta (
     Id_oferta       int auto_increment primary key,
     Nombre_oferta   varchar(100) not null,
@@ -84,9 +84,9 @@ create table Oferta (
     check (Cupos_maximos > 0)
 );
 
--- ------------------------------------------------------------
--- Imágenes adjuntas a cada oferta
--- ------------------------------------------------------------
+
+
+
 create table if not exists Oferta_imagen (
     Id_imagen   int auto_increment primary key,
     Id_oferta   int not null,
@@ -95,9 +95,9 @@ create table if not exists Oferta_imagen (
     foreign key (Id_oferta) references Oferta(Id_oferta) on delete cascade
 );
 
--- ------------------------------------------------------------
--- Itinerarios creados por los clientes
--- ------------------------------------------------------------
+
+
+
 create table Itinerario (
     Id_itinerario       int auto_increment primary key,
     Nombre_itinerario   varchar(100) not null,
@@ -114,9 +114,9 @@ create table Itinerario (
     check (Costo_total >= 0)
 );
 
--- ------------------------------------------------------------
--- Ofertas que forman parte de cada itinerario
--- ------------------------------------------------------------
+
+
+
 create table Detalle_Itinerario (
     Id_detalle      int auto_increment primary key,
     Cantidad        int not null,
@@ -133,9 +133,9 @@ create table Detalle_Itinerario (
     check (Subtotal >= 0)
 );
 
--- ------------------------------------------------------------
--- Reserva y pago del itinerario
--- ------------------------------------------------------------
+
+
+
 create table Reserva (
     Id_reserva          int auto_increment primary key,
     Fecha_reserva       datetime not null default current_timestamp,
@@ -153,10 +153,10 @@ create table Reserva (
     check (Valor_reembolso >= 0)
 );
 
--- ------------------------------------------------------------
--- Usuario supervisor para la revision de ofertas.
--- Contrasena: Supervisor123 (texto plano, prototipo academico).
--- ------------------------------------------------------------
+
+
+
+
 insert into Usuario
     (Nombres, Apellidos, Documento, Correo, Telefono, Contrasena, Tipo_usuario)
 values

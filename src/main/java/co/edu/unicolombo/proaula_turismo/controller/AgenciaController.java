@@ -31,8 +31,10 @@ public class AgenciaController {
 
     @GetMapping("/agencia/panel")
     public String panel(Model modelo, HttpSession http) {
+        // Consulta a la BD: trae solo las ofertas de la agencia que esta logueada.
         List<Oferta> propias = ofertas.porPublicador(sesion.idUsuario(http));
         modelo.addAttribute("total", propias.size());
+        // count() cuenta cuantas ofertas hay en cada estado para el panel.
         modelo.addAttribute("pendientes", propias.stream()
                 .filter(o -> OfertaService.PENDIENTE.equals(o.getEstadoOferta())).count());
         modelo.addAttribute("publicadas", propias.stream()
@@ -61,7 +63,9 @@ public class AgenciaController {
     public String editar(@RequestParam(name = "id", required = false) Integer id,
             Model modelo, RedirectAttributes mensajes, HttpSession http) {
         try {
+            // Si no viene el id, requerido lanza un error en vez de seguir.
             Oferta oferta = ofertas.buscar(requerido(id));
+            // Otra vez la regla: nadie edita ofertas ajenas.
             if (!oferta.getIdProveedor().equals(sesion.idUsuario(http))) {
                 mensajes.addFlashAttribute("error", "No puedes editar esa oferta.");
                 return "redirect:/agencia/lista";
@@ -69,6 +73,7 @@ public class AgenciaController {
             modelo.addAttribute("oferta", oferta);
             modelo.addAttribute("imagenes", ofertas.imagenes(oferta.getIdOferta()));
             return "agencia/editar";
+        // El mensaje de la validacion se muestra al usuario, no se lanza un 500.
         } catch (IllegalArgumentException e) {
             mensajes.addFlashAttribute("error", e.getMessage());
             return "redirect:/agencia/lista";
@@ -106,6 +111,7 @@ public class AgenciaController {
             @RequestParam(name = "imagenes", required = false) List<MultipartFile> imagenes,
             RedirectAttributes mensajes, HttpSession http) {
         try {
+            // parser convierte el texto del formulario en numeros antes de validar.
             ofertas.crear(parser.parsear(categoria, nombre, descripcion, isla, tarifa, cupos,
                     dias, horarioInicio, horarioFin, imagenes), sesion.idUsuario(http));
             mensajes.addFlashAttribute("mensaje", "Oferta enviada a auditoria.");
@@ -151,6 +157,7 @@ public class AgenciaController {
         return "redirect:/agencia/lista";
     }
 
+    // El id viene opcional en la URL; aqui lo hacemos obligatorio.
     private Integer requerido(Integer id) {
         if (id == null) {
             throw new IllegalArgumentException("Selecciona una oferta.");

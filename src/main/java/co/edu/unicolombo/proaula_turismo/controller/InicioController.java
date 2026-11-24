@@ -52,14 +52,18 @@ public class InicioController {
     @PostMapping("/login")
     public String procesarLogin(@RequestParam String correo, @RequestParam String contrasena,
             HttpServletRequest peticion, HttpSession sesionHttp, RedirectAttributes mensajes) {
+        // Si el correo y la clave coinciden, preparamos la entrada.
         return usuarios.autenticar(correo, contrasena).map(usuario -> {
-            // Evita fijacion de sesion: el id cambia justo antes de autenticar.
+            
+            // Cambiamos el id de sesion para que otro no pueda reutilizar el anterior.
             peticion.changeSessionId();
+            // Al entrar borramos el carrito viejo que pudiera quedar de otra cuenta.
             sesionHttp.removeAttribute(SesionService.ITINERARIO);
             sesionHttp.removeAttribute(SesionService.RESERVA);
             sesion.iniciar(sesionHttp, usuario);
             return "redirect:" + paginaInicial(usuario);
         }).orElseGet(() -> {
+            // Flash = mensaje que se muestra solo en la siguiente pagina.
             mensajes.addFlashAttribute("error", "Correo o contrasena incorrectos.");
             return "redirect:/login";
         });
@@ -73,14 +77,17 @@ public class InicioController {
 
     @GetMapping("/catalogo")
     public String catalogo(@RequestParam(name = "q", required = false) String busqueda, Model modelo) {
+        // Traemos de la BD solo las ofertas aprobadas por el supervisor.
         List<Oferta> publicadas = ofertas.publicadas();
         String filtro = normalizar(busqueda);
+        // Si el usuario escribio algo en el buscador, filtramos esa lista.
         if (!filtro.isEmpty()) {
             publicadas = publicadas.stream()
                     .filter(oferta -> coincide(oferta, filtro))
                     .toList();
         }
         modelo.addAttribute("ofertas", publicadas);
+        // Guardamos la primera foto de cada oferta para no buscarla una por una en la plantilla.
         modelo.addAttribute("imagenesPorOferta", ofertas.imagenesPrincipales(publicadas));
         modelo.addAttribute("q", busqueda == null ? "" : busqueda.trim());
         return "turista/catalogo";
@@ -98,6 +105,7 @@ public class InicioController {
 
     @GetMapping("/registro")
     public String registroPorTipo(@RequestParam(name = "tipo", required = false) String tipo) {
+        // El parametro ?tipo= decide cual de los tres formularios de registro se abre.
         if ("proveedor".equalsIgnoreCase(tipo)) {
             return "registro-proveedor";
         }
@@ -130,6 +138,7 @@ public class InicioController {
 
         String rutaRnt = null;
         try {
+            // Guardamos el PDF del RNT primero; si falla el registro se borra mas abajo.
             rutaRnt = archivos.guardar(rnt, "rnt");
             usuarios.registrar(new RegistroUsuario(nombres, documento, telefono, correo, contrasena,
                     tipoUsuario, nombreNegocio, tipoServicio, isla, descripcion,
@@ -137,14 +146,17 @@ public class InicioController {
                     tipoTurista, nacionalidad));
             mensajes.addFlashAttribute("registroExitoso", "Cuenta creada. Inicia sesion para continuar.");
             return "redirect:/login";
+        // Validacion del negocio fallida: se borra el PDF subido para no dejar basura.
         } catch (IllegalArgumentException e) {
             archivos.borrar(rutaRnt);
             mensajes.addFlashAttribute("error", e.getMessage());
+        // La BD rechazo el registro porque el correo, documento o NIT ya existe.
         } catch (DataIntegrityViolationException e) {
-            // Respaldo por si otra peticion registro el mismo correo, documento o NIT
-            // entre la validacion y el INSERT.
+            
+            
             archivos.borrar(rutaRnt);
             mensajes.addFlashAttribute("error", "Ya existe una cuenta o agencia con esos datos.");
+        // No se pudo escribir el certificado en disco; se limpia lo que se hubiera guardado.
         } catch (IllegalStateException e) {
             archivos.borrar(rutaRnt);
             mensajes.addFlashAttribute("error", "No se pudo guardar el certificado RNT. Intenta de nuevo.");
@@ -163,6 +175,7 @@ public class InicioController {
         return valor != null && normalizar(valor).contains(filtro);
     }
 
+    // Quita acentos y mayusculas para que Baru y baru busquen igual.
     private String normalizar(String valor) {
         if (valor == null) {
             return "";

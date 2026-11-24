@@ -49,6 +49,7 @@
                 <div class="text-end">
                     <strong th:text="|Reserva #${factura.numeroReserva}|">Reserva #CC-2026-0000</strong>
                     <br>
+                    <!-- #temporals pone la fecha y hora en texto legible. -->
                     <small class="text-muted" th:text="${#temporals.format(factura.reserva.fechaReserva, 'dd/MM/yyyy HH:mm')}">Fecha</small>
                 </div>
             </div>
@@ -118,9 +119,10 @@
         </div>
     </div>
 
+    <!-- Solo se limpia el carrito cuando el pago termino bien. -->
     <script th:if="${pagoExitoso}">
-        // Solo la factura que llega justo despues del pago limpia el carrito.
-        // Si el turista vuelve a abrir una factura anterior, su carrito no se toca.
+        
+        
         localStorage.removeItem('cayo_carrito');
     </script>
 </body>

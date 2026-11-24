@@ -2,7 +2,8 @@ package co.edu.unicolombo.proaula_turismo.service.dto;
 
 import org.springframework.web.multipart.MultipartFile;
 
-/** Datos que llegan de los tres formularios de registro. */
+
+// Todos los datos que vienen del formulario de registro, antes de limpiarlos.
 public record RegistroUsuario(
         String nombres,
         String documento,
