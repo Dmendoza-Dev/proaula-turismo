@@ -1,7 +1,5 @@
 package co.edu.unicolombo.proaula_turismo.service;
 
-import java.time.format.DateTimeFormatter;
-
 import org.springframework.stereotype.Service;
 
 import co.edu.unicolombo.proaula_turismo.model.Itinerario;
@@ -12,8 +10,6 @@ import co.edu.unicolombo.proaula_turismo.service.dto.FacturaDatos;
 
 @Service
 public class FacturaService {
-
-    private static final DateTimeFormatter FECHA = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy, HH:mm");
 
     private final ReservaService reservas;
     private final ItinerarioService itinerarios;
@@ -35,9 +31,5 @@ public class FacturaService {
         String numero = String.format("CC-%d-%04d", reserva.getFechaReserva().getYear(), reserva.getIdReserva());
         return new FacturaDatos(numero, cliente, itinerario, reserva,
                 itinerarios.items(itinerario.getIdItinerario()), reserva.getValorTotal());
-    }
-
-    public String formatearFecha(java.time.LocalDateTime fecha) {
-        return fecha.format(FECHA);
     }
 }

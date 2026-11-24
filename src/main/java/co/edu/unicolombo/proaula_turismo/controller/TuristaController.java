@@ -87,6 +87,8 @@ public class TuristaController {
         try {
             var reserva = reservas.pagar(id, metodoPago, sesion.idUsuario(http));
             http.setAttribute(SesionService.RESERVA, reserva.getIdReserva());
+            // Solo esta visita a la factura debe limpiar el carrito del navegador.
+            mensajes.addFlashAttribute("pagoExitoso", true);
             return "redirect:/turista/factura";
         } catch (IllegalArgumentException e) {
             mensajes.addFlashAttribute("error", e.getMessage());

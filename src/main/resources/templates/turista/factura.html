@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,7 +13,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-6 d-flex align-items-center gap-2">
-                    <img src="/img/logo.png" alt="" width="40" class="puerto">
+                    <img src="/img/logo.png" alt="Logo Cayo Cartagena" width="40" class="puerto">
                     <div>
                         <h1 class="h4 mb-0">Cayo Cartagena</h1>
                         <small>Turista</small>
@@ -118,8 +118,9 @@
         </div>
     </div>
 
-    <script>
-        // La reserva ya esta guardada: se limpia el carrito del navegador.
+    <script th:if="${pagoExitoso}">
+        // Solo la factura que llega justo despues del pago limpia el carrito.
+        // Si el turista vuelve a abrir una factura anterior, su carrito no se toca.
         localStorage.removeItem('cayo_carrito');
     </script>
 </body>

@@ -35,14 +35,15 @@ public class ReservaService {
         if (reservas.findByIdItinerario(idItinerario).isPresent()) {
             throw new IllegalArgumentException("Este itinerario ya tiene una reserva.");
         }
-        if (metodoPago == null || metodoPago.isBlank()) {
-            throw new IllegalArgumentException("Elige un metodo de pago.");
-        }
+        String metodo = MetodosPago.normalizar(metodoPago);
+
+        // Se valida y descuenta la capacidad antes de confirmar el pago.
+        itinerarioService.descontarCupos(idItinerario);
 
         Reserva reserva = new Reserva();
         reserva.setFechaReserva(LocalDateTime.now());
         reserva.setValorTotal(itinerario.getCostoTotal());
-        reserva.setMetodoPago(metodoPago);
+        reserva.setMetodoPago(metodo);
         reserva.setEstadoPago("Aprobado");
         reserva.setEstadoReserva("Pagada");
         reserva.setValorReembolso(BigDecimal.ZERO);

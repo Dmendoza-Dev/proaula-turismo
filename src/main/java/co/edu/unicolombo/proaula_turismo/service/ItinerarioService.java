@@ -8,6 +8,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,7 @@ public class ItinerarioService {
 
     public static final String PENDIENTE_PAGO = "Pendiente de pago";
     public static final String RESERVADO = "Reservado";
+    private static final int DIAS_BUSQUEDA = 90;
 
     private final ItinerarioRepository itinerarios;
     private final DetalleItinerarioRepository detalles;
@@ -43,6 +46,9 @@ public class ItinerarioService {
     public Itinerario crear(List<ItemCarrito> items, Integer idCliente) {
         if (items == null || items.isEmpty()) {
             throw new IllegalArgumentException("Tu itinerario esta vacio.");
+        }
+        if (idCliente == null) {
+            throw new IllegalArgumentException("Tu sesion ya no es valida. Inicia sesion de nuevo.");
         }
 
         Map<Integer, Oferta> seleccionadas = new LinkedHashMap<>();
@@ -71,10 +77,19 @@ public class ItinerarioService {
             destinos.add(oferta.getIsla());
         }
 
+        // Todas las ofertas deben poder disfrutarse el mismo dia.
+        LocalDate fechaVisita = DisponibilidadOfertas.primeraFechaCompatible(
+                seleccionadas.values(), LocalDate.now().plusDays(1), DIAS_BUSQUEDA);
+        if (fechaVisita == null) {
+            throw new IllegalArgumentException(
+                    "Las ofertas elegidas no coinciden en ningun dia disponible en los proximos "
+                            + DIAS_BUSQUEDA + " dias. Quita una oferta o elige otras.");
+        }
+
         Itinerario itinerario = new Itinerario();
         itinerario.setNombreItinerario("Itinerario " + LocalDate.now());
         itinerario.setDestino(recortar(String.join(" y ", destinos), 150));
-        itinerario.setFechaVisita(LocalDate.now().plusDays(7));
+        itinerario.setFechaVisita(fechaVisita);
         itinerario.setNumPersonas(personas);
         itinerario.setCostoTotal(total);
         itinerario.setEstadoItinerario(PENDIENTE_PAGO);
@@ -104,15 +119,52 @@ public class ItinerarioService {
     }
 
     public List<ItemItinerario> items(Integer idItinerario) {
+        List<DetalleItinerario> lista = detalles.findByIdItinerario(idItinerario);
+        if (lista.isEmpty()) {
+            return List.of();
+        }
+        List<Integer> ids = lista.stream().map(DetalleItinerario::getIdOferta).distinct().toList();
+        Map<Integer, Oferta> porId = ofertas.findAllById(ids).stream()
+                .collect(Collectors.toMap(Oferta::getIdOferta, Function.identity()));
+
         List<ItemItinerario> resultado = new ArrayList<>();
-        for (DetalleItinerario detalle : detalles.findByIdItinerario(idItinerario)) {
-            Oferta oferta = ofertas.findById(detalle.getIdOferta())
-                    .orElseThrow(() -> new IllegalArgumentException("Una oferta del itinerario no existe."));
+        for (DetalleItinerario detalle : lista) {
+            Oferta oferta = porId.get(detalle.getIdOferta());
+            if (oferta == null) {
+                throw new IllegalArgumentException("Una oferta del itinerario no existe.");
+            }
             resultado.add(new ItemItinerario(
                     oferta.getNombreOferta(), oferta.getCategoria(), oferta.getIsla(),
                     detalle.getCantidad(), detalle.getPrecioUnitario(), detalle.getSubtotal()));
         }
         return resultado;
+    }
+
+    /**
+     * Descuenta los cupos cuando el pago se confirma. Si dos personas compran
+     * la misma oferta quedan dos cupos menos. La capacidad es por oferta, no
+     * por fecha: es una simplificacion del prototipo.
+     */
+    @Transactional
+    public void descontarCupos(Integer idItinerario) {
+        Itinerario itinerario = itinerarios.findById(idItinerario)
+                .orElseThrow(() -> new IllegalArgumentException("El itinerario no existe."));
+        for (DetalleItinerario detalle : detalles.findByIdItinerario(idItinerario)) {
+            Oferta oferta = ofertas.findById(detalle.getIdOferta())
+                    .orElseThrow(() -> new IllegalArgumentException("Una oferta del itinerario no existe."));
+            if (!OfertaService.PUBLICADA.equals(oferta.getEstadoOferta())) {
+                throw new IllegalArgumentException("La oferta " + oferta.getNombreOferta() + " ya no esta disponible.");
+            }
+            if (!DisponibilidadOfertas.disponibleEn(oferta, itinerario.getFechaVisita())) {
+                throw new IllegalArgumentException("La oferta " + oferta.getNombreOferta()
+                        + " ya no se ofrece en la fecha del itinerario.");
+            }
+            if (oferta.getCuposMaximos() < detalle.getCantidad()) {
+                throw new IllegalArgumentException("Ya no hay cupos suficientes para " + oferta.getNombreOferta() + ".");
+            }
+            oferta.setCuposMaximos(oferta.getCuposMaximos() - detalle.getCantidad());
+            ofertas.save(oferta);
+        }
     }
 
     private String recortar(String texto, int limite) {
